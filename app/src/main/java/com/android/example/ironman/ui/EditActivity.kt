@@ -1,31 +1,26 @@
-package com.android.example.ironman
+package com.android.example.ironman.ui
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import com.android.example.ironman.R
 import com.android.example.ironman.db.Expense
-import com.android.example.ironman.db.MyDbHelper
-import com.android.example.ironman.db.Table
+import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_edit.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 class EditActivity : AppCompatActivity() {
-    private val TAG = "EditAct"
     var mCurrentExpenseUri: Uri? = null
     var Category = "Others"
-
 
 
     private var mExpenseHasChanged: Boolean = false
@@ -39,9 +34,7 @@ class EditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
-        val db : SQLiteDatabase? = MyDbHelper(this).writableDatabase
 
-        Log.d(TAG, "" + db)
 
         val intent = intent
         mCurrentExpenseUri = intent.data
@@ -53,11 +46,8 @@ class EditActivity : AppCompatActivity() {
 
         } else {
 
-            Log.v(TAG, "activity is being called")
 
             title = getString(R.string.editor_activity_title_edit_expense)
-
-
 
 
         }
@@ -65,6 +55,8 @@ class EditActivity : AppCompatActivity() {
 
         etTotal.setOnTouchListener(mTouchListener)
         spinner_category.setOnTouchListener(mTouchListener)
+        val actionBar = supportActionBar
+        actionBar!!.setDisplayHomeAsUpEnabled(true)
         setupSpinner()
 
     }
@@ -95,7 +87,6 @@ class EditActivity : AppCompatActivity() {
             override fun onNothingSelected(
                     parent: AdapterView<*>
             ) {
-                Toast.makeText(this@EditActivity, "Nothing selected", Toast.LENGTH_SHORT).show()
 
             }
         })
@@ -111,10 +102,8 @@ class EditActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // User clicked on a menu option in the app bar overflow menu
         when (item.itemId) {
             R.id.action_save -> {
-                empty_view.visibility = View.INVISIBLE
                 saveExpense()
                 finish()
                 return true
@@ -127,46 +116,42 @@ class EditActivity : AppCompatActivity() {
             android.R.id.home -> {
 
                 if (!mExpenseHasChanged) {
-                    NavUtils.navigateUpFromSameTask(this@EditActivity)
+                    NavUtils.navigateUpFromSameTask(this)
                     return true
                 }
-
-
                 val discardButtonClickListener = DialogInterface.OnClickListener { dialogInterface, i ->
                     NavUtils.navigateUpFromSameTask(this@EditActivity)
                 }
-
                 showUnsavedChangesDialog(discardButtonClickListener)
                 return true
             }
         }
+
+
         return super.onOptionsItemSelected(item)
     }
 
     private fun saveExpense() {
 
-        val db : SQLiteDatabase? = MyDbHelper(this).writableDatabase
 
         if (mCurrentExpenseUri == null) {
 
 
-            Log.v(TAG, "add Expense ")
-
             val total = etTotal.getText().toString().trim()
-            Log.d("MainAct", total)
-            Log.v(TAG, "all the edittext values are stored in strings ")
 
             if (mCurrentExpenseUri == null &&
                     TextUtils.isEmpty(total) && Category == getString(R.string.cat_others)) {
-                Log.d("MainAct", "empty")
-                Toast.makeText(this@EditActivity, "nothing changed" , Toast.LENGTH_SHORT).show()
 
                 return
             }
 
-            val addExpense = Table.addExpense(db!!, Expense(
-                    null, total.toInt(), Category
-            ))
+
+            val expense = Expense(
+                    money = total.toInt(),
+                    category = Category,
+                    time = System.currentTimeMillis()
+            )
+            val addExpense = expense.save()
 
 
             if (addExpense == -1L) {
@@ -177,26 +162,17 @@ class EditActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT).show()
             }
         } else {
-
-
-            Log.v(TAG, "edit expense ")
-            Log.v(TAG, "content values is being instanciated")
-
-
             val money = etTotal.getText().toString().trim({ it <= ' ' })
-
-
-            Log.v(TAG, "all the edittext values are stored in strings ")
-
             val id = java.lang.Long.valueOf(mCurrentExpenseUri!!.getLastPathSegment())
 
 
-            //getContentResolver().update(HabitTable.CONTENT_URI,values,HabitTable.ID+"=?",new String[] {String.valueOf(id)}); //id is the id of the row you wan to update
-            val rowsAffected = Table.updateExpense(db!!, Expense(
-                    id.toInt(), money.toInt(), Category
-            ))
+            val updatedExpense = SugarRecord.findById(Expense::class.java, id)
+            updatedExpense.money = money.toInt()
 
-            if (rowsAffected == 0) {
+
+            val rowsAffected = updatedExpense.update()
+
+            if (rowsAffected == 0L) {
                 Toast.makeText(this, getString(R.string.editor_update_expense_failed),
                         Toast.LENGTH_SHORT).show()
             } else {
@@ -207,13 +183,10 @@ class EditActivity : AppCompatActivity() {
         }
 
 
-
-
-
     }
 
     override fun onBackPressed() {
-        if (!mExpenseHasChanged) {
+        if (!mExpenseHasChanged || etTotal.text.trim().toString().isEmpty()) {
             super.onBackPressed()
             return
         }
@@ -225,9 +198,12 @@ class EditActivity : AppCompatActivity() {
                 }
 
         showUnsavedChangesDialog(discardButtonClickListener)
+
+
     }
 
     private fun showDeleteConfirmationDialog() {
+
 
         val builder = AlertDialog.Builder(this)
         builder.setMessage(R.string.delete_dialog_msg)
@@ -245,6 +221,7 @@ class EditActivity : AppCompatActivity() {
 
     private fun showUnsavedChangesDialog(
             discardButtonClickListener: android.content.DialogInterface.OnClickListener) {
+
 
         val builder = android.app.AlertDialog.Builder(this)
         builder.setMessage(R.string.unsaved_changes_dialog_msg)

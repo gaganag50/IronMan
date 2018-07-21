@@ -2,17 +2,20 @@ package com.android.example.ironman.db
 
 import com.orm.SugarRecord
 
-// this is the form in which we are filling the table
-class Expense() : SugarRecord<Expense>() {
-    var id: Int? = 1
+
+class Expense : SugarRecord {
     var money: Int = 0
     var catergory: String? = null
+    var time: Long = 0L
+
+    constructor() {}
 
 
+    constructor(money: Int, category: String, time: Long) {
 
-    constructor(money: Int, category: String) : this() {
         this.money = money
-        this.catergory = catergory
+        this.catergory = category
+        this.time = time
     }
 
 }

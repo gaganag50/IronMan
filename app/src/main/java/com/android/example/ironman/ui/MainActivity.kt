@@ -1,22 +1,22 @@
-package com.android.example.ironman
+package com.android.example.ironman.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.android.example.ironman.ExpenseAdatper
+import com.android.example.ironman.R
+import com.android.example.ironman.SettingsActivity
 import com.android.example.ironman.db.Expense
-import com.android.example.ironman.db.MyDbHelper
-import com.android.example.ironman.db.Table
+import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var adapter: ExpenseAdatper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,48 +25,6 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             startActivity(Intent(this@MainActivity, EditActivity::class.java))
         }
-
-        val db = MyDbHelper(this).writableDatabase
-
-        val data = Table.getAll(db)
-        if (data.size != 0) {
-            empty_view.visibility = View.GONE
-        }
-
-
-        // we havve  to fill the content in the database and the arraylist
-        // first i am filling the content in the database
-        // then i am fetching the data in the arraylist
-        // then i am binind the data with the edittexts
-        // how to bind the spinner value with the view
-
-
-        // when displaying here , fetch the data from the database
-
-        fun refereshList() {
-            data.clear()
-            data.addAll(Table.getAll(db))
-            if (data.size != 0) {
-                empty_view.visibility = View.GONE
-            }
-            Log.d("MainAct", "" + data.toList().toString())
-            adapter.notifyDataSetChanged()
-
-        }
-
-        val onTaskDelete= {
-            expense: Expense ->
-            Table.deleteExpense(db, expense)
-            refereshList()
-        }
-        adapter = ExpenseAdatper(data, this, onTaskDelete)
-
-
-        list.layoutManager = LinearLayoutManager(this)
-
-        list.adapter = adapter
-
-
         refereshList()
 
 
@@ -94,5 +52,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun settings() = startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
 
+    override fun onResume() {
+        super.onResume()
+        refereshList()
+    }
+
+    private fun refereshList() {
+
+        val expenses = SugarRecord.listAll(Expense::class.java)
+        val listOfExpenses = ArrayList<Expense>(expenses.toList())
+        if (listOfExpenses.size > 0) {
+            empty_view.visibility = View.INVISIBLE
+        } else {
+            empty_view.visibility = View.VISIBLE
+        }
+        rvList.layoutManager = LinearLayoutManager(this)
+        val adapter = ExpenseAdatper(listOfExpenses)
+
+
+
+        rvList.adapter = adapter
+//            adapter.setOnCardClickListner(this)
+
+    }
 
 }
+

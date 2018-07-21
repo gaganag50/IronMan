@@ -7,9 +7,6 @@ import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_settings.*
-import android.content.Intent
-
-
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -59,8 +56,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val myIntent = Intent(applicationContext, MainActivity::class.java)
-        startActivityForResult(myIntent, 0)
+        NavUtils.navigateUpFromSameTask(this)
         return true
     }
 
