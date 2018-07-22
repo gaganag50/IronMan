@@ -24,17 +24,37 @@
             android:textColor="#2B3D4D"
             tools:text="@string/total" />
 
-        <TextView
-            android:id="@+id/tvCategory"
-            style="@style/TextAppearance.AppCompat.Medium"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/main_activity_margin"
-            android:paddingBottom="@dimen/main_activity_margin"
+            android:orientation="horizontal">
 
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#AEB6BD"
-            tools:text="@string/category_type" />
+            <TextView
+                android:id="@+id/tvCategory"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="@dimen/main_activity_margin"
+                android:layout_weight="1"
+                android:paddingBottom="@dimen/main_activity_margin"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="#2B3D4D"
+                tools:text="@string/category_type" />
+
+            <TextView
+                android:id="@+id/tvNote"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_activity_margin"
+                android:layout_weight="3"
+                android:paddingBottom="@dimen/main_activity_margin"
+
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="#AEB6BD"
+                tools:text="@string/note" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvTime"

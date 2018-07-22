@@ -1,21 +1,28 @@
 package com.android.example.ironman.ui
 
+import android.content.ContentUris
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.android.example.ironman.ExpenseAdatper
+import android.widget.TextView
+import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.R
-import com.android.example.ironman.SettingsActivity
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener {
+    override fun onLongItemClick(view: View?, position: Int) {
+
+    }
+
+    val TAG: String = "MainAct"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,16 +39,12 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu options from the res/menu/menu_catalog.xml file.
-        // This adds menu items to the app bar.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // User clicked on a menu option in the app bar overflow menu
         when (item.itemId) {
-        // Respond to a click on the "settings" menu option
             R.id.settings -> {
                 settings()
                 return true
@@ -71,10 +74,44 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
         rvList.adapter = adapter
-//            adapter.setOnCardClickListner(this)
+        adapter.notifyDataSetChanged()
+        rvList.addOnItemTouchListener(RecyclerItemTouch(this@MainActivity, rvList, this))
+
 
     }
+
+    override fun onItemClick(view: View, position: Int) {
+        val textView = view.findViewById(R.id.tvtotal) as TextView
+        val i = Intent(this@MainActivity, EditActivity::class.java)
+        val currentExpenseUri = ContentUris.withAppendedId(
+                Uri.parse("content://com.android.example.ironman"), position.toLong())
+        i.data = currentExpenseUri
+        startActivity(i)
+
+
+    }
+
+//    override fun onLongItemClick(view: View?, position: Int) {
+//
+//        AlertDialog.Builder(this@MainActivity)
+//                .setMessage(R.string.delete_dialog_msg)
+//                .setPositiveButton(R.string.delete) { dialog, id ->
+//                    val expense = SugarRecord.findById(Expense::class.java, id + 1)
+//                    expense.delete()
+//
+//
+//                }
+//                .setNegativeButton(R.string.cancel)
+//                { dialog, _ ->
+//
+//                    dialog?.dismiss()
+//                }
+//
+//                .create()
+//                .show()
+//    }
 
 }
 

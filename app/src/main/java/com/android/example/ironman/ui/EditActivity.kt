@@ -3,10 +3,12 @@ package com.android.example.ironman.ui
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,13 +16,21 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.android.example.ironman.R
+import com.android.example.ironman.date.DatePickerFragment
+import com.android.example.ironman.date.DateTime
+import com.android.example.ironman.date.TimePickerFragment
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_edit.*
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.*
+
 
 class EditActivity : AppCompatActivity() {
     var mCurrentExpenseUri: Uri? = null
     var Category = "Others"
+    val TAG: String = "EditAct"
 
 
     private var mExpenseHasChanged: Boolean = false
@@ -45,18 +55,42 @@ class EditActivity : AppCompatActivity() {
             invalidateOptionsMenu()
 
         } else {
-
+            val id = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
+            Log.d(TAG, ": " + id)
 
             title = getString(R.string.editor_activity_title_edit_expense)
+            val updatedExpense = SugarRecord.findById(Expense::class.java, id + 1)
+            Log.d(TAG, ": " + updatedExpense)
 
+            val initialMoney = updatedExpense?.money.toString()
+            val initialCategory = updatedExpense?.catergory
+            if (initialCategory != null) {
+                setupSpinner(initialCategory)
+            }
+            etTotal.setText(initialMoney)
 
         }
 
+        val datetime = DateTime()
+        datetime.setTime(btnTime)
+
+        datetime.setDate(btnAttendanceDate)
+        btnTime.setOnClickListener {
+            // Initialize a new TimePickerFragment
+            val newFragment = TimePickerFragment(btnTime)
+            // Show the time picker dialog
+            newFragment.show(fragmentManager, "Time Picker")
+        }
+        btnAttendanceDate.setOnClickListener {
+            val newFragment2 = DatePickerFragment(btnAttendanceDate)
+            newFragment2.show(fragmentManager, "Date Picker")
+
+        }
 
         etTotal.setOnTouchListener(mTouchListener)
         spinner_category.setOnTouchListener(mTouchListener)
         val actionBar = supportActionBar
-        actionBar!!.setDisplayHomeAsUpEnabled(true)
+        actionBar?.setDisplayHomeAsUpEnabled(true)
         setupSpinner()
 
     }
@@ -90,6 +124,13 @@ class EditActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+
+    fun setupSpinner(initialCategory: String) {
+
+        // todo set the initial value of the spinner to the string
+
     }
 
 
@@ -137,7 +178,8 @@ class EditActivity : AppCompatActivity() {
         if (mCurrentExpenseUri == null) {
 
 
-            val total = etTotal.getText().toString().trim()
+            val total = etTotal.text.toString().trim()
+            val note = etNote.text.toString().trim()
 
             if (mCurrentExpenseUri == null &&
                     TextUtils.isEmpty(total) && Category == getString(R.string.cat_others)) {
@@ -145,10 +187,63 @@ class EditActivity : AppCompatActivity() {
                 return
             }
 
+            val cal = Calendar.getInstance()
+            val time = cal.getTime()    // Sun Jul 22 18:22:05 GMT+05:30 2018
+            Toast.makeText(this@EditActivity, "" + time, Toast.LENGTH_SHORT).show()
+            Log.d(TAG, ": $time")
+
+
+            val originalString = "2010-07-14 09:00:02"
+            val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString)
+            val newString = SimpleDateFormat("H:mm").format(date) // 9:00
+
+
+            val date2: Date = Date() // your date
+            val cal2 = Calendar.getInstance()
+            cal.time = date2
+            val year2 = cal.get(Calendar.YEAR)
+            val month2 = cal.get(Calendar.MONTH)
+            val day2 = cal.get(Calendar.DAY_OF_MONTH)
+            Log.d(TAG, ":  $cal2 \n $year2 \n $month2  \n $day2")
+            // java.util.GregorianCalendar[
+            // time=1532263925751,areFieldsSet=true,lenient=true,zone=Asia/Calcutta,firstDayOfWeek=1,minimalDaysInFirstWeek=1,
+            // ERA=1,YEAR=2018,MONTH=6,WEEK_OF_YEAR=30,WEEK_OF_MONTH=4,DAY_OF_MONTH=22,DAY_OF_YEAR=203,DAY_OF_WEEK=1,
+            // DAY_OF_WEEK_IN_MONTH=4,AM_PM=1,HOUR=6,HOUR_OF_DAY=18,MINUTE=22,SECOND=5,MILLISECOND=751,ZONE_OFFSET=19800000,
+            // DST_OFFSET=0] 2010 6 14
+
+
+            // cal -->
+            // year2 --> 2018
+            // month2 --> 6
+            // day2 --> 22
+
+
+            // better
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val date3 = Date()
+                val localDate = date3.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+                val year = localDate.year
+                val month = localDate.monthValue
+                val day = localDate.dayOfMonth
+                Log.d(TAG, ": $localDate $year $month $day")
+
+            }
+            val simpleDateFormat = SimpleDateFormat("EEEEEE")
+            Log.d(TAG, ": $simpleDateFormat")
+
+            val time1 = cal.time
+            Log.d(TAG, "time: $time1")
+
+            val ti = SimpleDateFormat("EEEEEE").format(cal.getTime())
+            Log.d(TAG, ": $ti")
+
+            Toast.makeText(this@EditActivity, "" + ti, Toast.LENGTH_SHORT).show()
 
             val expense = Expense(
                     money = total.toInt(),
                     category = Category,
+                    note = note,
                     time = System.currentTimeMillis()
             )
             val addExpense = expense.save()
@@ -162,15 +257,16 @@ class EditActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT).show()
             }
         } else {
-            val money = etTotal.getText().toString().trim({ it <= ' ' })
-            val id = java.lang.Long.valueOf(mCurrentExpenseUri!!.getLastPathSegment())
-
+            val id = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
+            Log.d(TAG, "id: $id")
 
             val updatedExpense = SugarRecord.findById(Expense::class.java, id)
-            updatedExpense.money = money.toInt()
-
-
+            updatedExpense.money = etTotal.text.toString().toInt()
             val rowsAffected = updatedExpense.update()
+            Log.d(TAG, ": $rowsAffected")
+            Log.d(TAG, """
+                : ${updatedExpense.money} ${updatedExpense.catergory} ${updatedExpense.time}
+                """.trimIndent())
 
             if (rowsAffected == 0L) {
                 Toast.makeText(this, getString(R.string.editor_update_expense_failed),
@@ -234,5 +330,35 @@ class EditActivity : AppCompatActivity() {
         val alertDialog = builder.create()
         alertDialog.show()
     }
+
+//    fun setTime() {
+//
+//        val date = System.currentTimeMillis()
+//
+//        val sdf = SimpleDateFormat(" h:mm a")
+//        val dateString = sdf.format(date)
+//        textview.setText(dateString)
+//
+//        // for the dialog box
+//
+//
+//    }
+//
+//    fun setDate() {
+//        val time = System.currentTimeMillis()
+//        val sdf = SimpleDateFormat("dd/MM/yy")
+//        val timeString = sdf.format(time)
+//        textview.setText(timeString)
+//
+//    }
+//
+//    fun setDay() {
+//        val day = System.currentTimeMillis()
+//        val sdf = SimpleDateFormat("EEEE")
+//        val dayString = sdf.format(day)
+//        textView.setText(dayString)
+//    }
+
+
 }
 

@@ -2,7 +2,7 @@
     <string name="app_name">IronMan</string>
 
 
-    <string name="editor_activity_title_new_expense">Add an expense</string>
+    <string name="editor_activity_title_new_expense">Add Transaction</string>
 
 
     <string name="action_save">Save</string>
@@ -20,7 +20,7 @@
     <string name="editor_insert_expense_successful">Expense saved</string>
     <string name="empty_view_title_text">No Transactions</string>
     <string name="editor_activity_title_edit_expense">Edit expense</string>
-    <string name="editor_activity_title_add_expense">Add a expense</string>
+    <string name="editor_activity_title_add_expense">Add an expense</string>
     <string name="editor_update_expense_failed">update failed</string>
     <string name="editor_update_expense_successful">update successful</string>
 
@@ -262,6 +262,8 @@
     <string name="content_description_for_image">money making app</string>
     <string name="unit_pet_money">Rs</string>
     <string name="editor_insert_expense_failed">Expense Not Saved</string>
+    <string name="note">Note</string>
+    <string name="descp">Add description</string>
 
 
 </resources>
