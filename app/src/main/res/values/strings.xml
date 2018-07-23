@@ -264,6 +264,7 @@
     <string name="editor_insert_expense_failed">Expense Not Saved</string>
     <string name="note">Note</string>
     <string name="descp">Add description</string>
+    <string name="okTextDatePicker">SELECT DATE</string>
 
 
 </resources>

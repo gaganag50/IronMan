@@ -24,5 +24,8 @@
     <color name="purple">#7E57C2</color>
     <color name="blue_light">#039BE5</color>
 
+    <color name="mdtp_accent_color">#009688</color>
+    <color name="mdtp_accent_color_dark">#00796b</color>
+
 
 </resources>

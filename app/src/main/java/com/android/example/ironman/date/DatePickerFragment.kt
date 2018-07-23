@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.DialogFragment
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.widget.DatePicker
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_edit.*
@@ -15,6 +17,7 @@ import java.util.*
 class DatePickerFragment(val textView: TextView) : DialogFragment(), DatePickerDialog.OnDateSetListener {
 
 
+val TAG: String = "DatePickerFrag"
 
     private lateinit var calendar: Calendar
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -28,7 +31,7 @@ class DatePickerFragment(val textView: TextView) : DialogFragment(), DatePickerD
         return DatePickerDialog(
                 activity,
 
-                android.R.style.Theme_Holo_Light_Dialog_NoActionBar_MinWidth,
+
                 this,
                 year,
                 month,
@@ -39,7 +42,13 @@ class DatePickerFragment(val textView: TextView) : DialogFragment(), DatePickerD
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         val date = "You picked the following date: " + dayOfMonth + "/" + (month + 1) + "/" + year
-        btnAttendanceDate.setText(date)
+        Log.d(TAG, ": year DatePicker $year")
+        Log.d(TAG, ": month DatePicker $month")
+        Log.d(TAG, ": dayOfMonth DatePicker $dayOfMonth")
+
+
+        textView.setText(date)
+        formatDate(year, month, dayOfMonth)
     }
 
 

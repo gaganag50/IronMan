@@ -16,42 +16,22 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.android.example.ironman.R
-import com.android.example.ironman.R.string.month
 import com.android.example.ironman.date.DatePickerFragment
-import com.android.example.ironman.date.DateTime
-import com.android.example.ironman.date.TimePickerFragment
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import kotlinx.android.synthetic.main.activity_edit.*
+import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.ZoneId
 import java.util.*
 
 
 class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
-    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        populateSetDate(year, month + 1, dayOfMonth)
+    val TAG: String = "EditAct"
 
-    }
-
-    private fun populateSetDate(year: Int, montht: Int, day: Int) {
-
-        Log.d("IncomeAct", "populateSetDate: ")
-        if (day <= 9 && month <= 9) {
-            btnAttendanceDate.setText("0$day/0$month/$year")
-        } else if (day <= 9 && month > 9) {
-            btnAttendanceDate.setText("0$day/$month/$year")
-        } else if (day > 9 && month <= 9) {
-            btnAttendanceDate.setText("" + day + "/" + "0" + month + "/" + year)
-        } else {
-            btnAttendanceDate.setText("" + day + "/" + month + "/" + year)
-        }
-    }
 
     var mCurrentExpenseUri: Uri? = null
     var Category = "Others"
-    val TAG: String = "EditAct"
 
 
     private var mExpenseHasChanged: Boolean = false
@@ -61,6 +41,51 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         mExpenseHasChanged = true
         false
     }
+
+
+    fun getMonthName(month: Int): String {
+        when (month + 1) {
+            1 -> return "Jan"
+
+            2 -> return "Feb"
+
+            3 -> return "Mar"
+
+            4 -> return "Apr"
+
+            5 -> return "May"
+
+            6 -> return "Jun"
+
+            7 -> return "Jul"
+
+            8 -> return "Aug"
+
+            9 -> return "Sep"
+
+            10 -> return "Oct"
+
+            11 -> return "Nov"
+
+            12 -> return "Dec"
+        }
+        return ""
+    }
+
+    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        val month = getMonthName(monthOfYear)
+        val date = "$month $dayOfMonth , $year"
+        btnAttendanceDate.setText(date)
+    }
+
+    private fun getMonthNumber(monthName: String): Int {
+        val date = SimpleDateFormat("MMM").parse(monthName)
+        val cal = Calendar.getInstance()
+        cal.time = date
+        val getMonth = cal.get(Calendar.MONTH)
+        return getMonth
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,40 +118,76 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         }
 
 
-
 //        btnTime.setOnClickListener {
 //            // Initialize a new TimePickerFragment
 //            val newFragment = TimePickerFragment(btnTime)
 //            // Show the time picker dialog
 //            newFragment.show(fragmentManager, "Time Picker")
 //        }
-//        val newFragment2 = DatePickerFragment(btnAttendanceDate)
-//        btnAttendanceDate.setOnClickListener {
-//
-////            newFragment2.show(fragmentManager, "Date Picker")
-//
-//
-//
-//            val now = Calendar.getInstance()
-//            val dpd = DatePickerDialog.newInstance(
-//                    this@EditActivity,
-//                    now.get(Calendar.YEAR),
-//                    now.get(Calendar.MONTH),
-//                    now.get(Calendar.DAY_OF_MONTH)
-//            )
-//            dpd.show(fragmentManager, "Datepickerdialog")
-//            val datetime = DateTime()
-//            datetime.setTime(btnTime)
-//            datetime.setDate(btnAttendanceDate)
-//
-//
-//        }
+
+
+//        val format2 = DateFormat.getDateTimeInstance().format(Date(expense.time))
+//        itemView.findViewById<TextView>(R.id.tvTime).text = format2
+
+
+        btnAttendanceDate.text = DateFormat.getDateInstance().format(Date(System.currentTimeMillis()))
+        btnTime.text = DateFormat.getTimeInstance().format(Date(System.currentTimeMillis()))
+
+
+        btnAttendanceDate.setOnClickListener {
+
+
+            displayDate()
+
+
+        }
 
         etTotal.setOnTouchListener(mTouchListener)
         spinner_category.setOnTouchListener(mTouchListener)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
         setupSpinner()
+
+    }
+
+    private fun displayDate() {
+
+        val now = Calendar.getInstance()
+        val selectedDate = btnAttendanceDate.text.toString()
+        val monthString = selectedDate.substring(0, 3)
+        val dateString: String?
+        val yearString: String?
+        when {
+            selectedDate.length == 12 -> {
+                dateString = selectedDate.substring(4, 5)
+                yearString = selectedDate.substring(8, 12)
+            }
+            else -> {
+                dateString = selectedDate.substring(4, 6)
+                yearString = selectedDate.substring(9, 13)
+
+            }
+        }
+
+
+        val monthNumber = getMonthNumber(monthString)
+        val dpd = DatePickerDialog.newInstance(
+                this@EditActivity,
+                yearString.toInt(),
+                monthNumber,
+                dateString.toInt()
+        )
+
+        dpd.show(fragmentManager, "Datepickerdialog")
+        dpd.setVersion(DatePickerDialog.Version.VERSION_2);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            dpd.accentColor = resources.getColor(R.color.accent_material_light, theme)
+        }
+        dpd.setOkText(getString(R.string.okTextDatePicker))
+
+        dpd.setHighlightedDays(arrayOf(now))
+        DatePickerFragment(btnAttendanceDate)
 
     }
 
@@ -221,7 +282,6 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
                 return
             }
-
 
 
             val expense = Expense(
