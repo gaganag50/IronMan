@@ -35,6 +35,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         mExpenseHasChanged = true
         false
     }
+//    val stringArray = resources.getStringArray(R.array.array_category_options)
 
     fun getMonthName(month: Int): String {
         when (month + 1) {
@@ -129,6 +130,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             btnAttendanceDate.text = DateFormat.getDateInstance().format(Date(System.currentTimeMillis()))
             btnTime.text = DateFormat.getTimeInstance().format(Date(System.currentTimeMillis()))
             invalidateOptionsMenu()
+            setupSpinner(Category)
 
         } else {
             val id = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
@@ -151,9 +153,11 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
 
 
+
             if (initialCategory != null) {
                 setupSpinner(initialCategory)
             }
+
             etTotal.setText(initialMoney)
             etNote.setText(initialdescription)
             btnTime.setText(initialtime)
@@ -174,7 +178,6 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        setupSpinner()
 
     }
 
@@ -282,7 +285,8 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
     }
 
 
-    fun setupSpinner() {
+    fun setupSpinner(category: String) {
+//        val indexOf = stringArray.indexOf(category)
 
         val categorySpinnerAdapter =
                 ArrayAdapter.createFromResource(this,
@@ -308,15 +312,11 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
                     parent: AdapterView<*>
             ) {
 
+
             }
         })
-    }
 
-
-    fun setupSpinner(initialCategory: String) {
-
-        // todo set the initial value of the spinner to the string
-
+//        spinner_category.setSelection(indexOf)
     }
 
 
@@ -405,8 +405,12 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             val id = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
             Log.d(TAG, "id: $id")
 
-            val updatedExpense = SugarRecord.findById(Expense::class.java, id)
+            val updatedExpense = SugarRecord.findById(Expense::class.java, id + 1)
             updatedExpense.money = etTotal.text.toString().toInt()
+            updatedExpense.description = etNote.text.toString()
+            updatedExpense.date = btnAttendanceDate.text.toString()
+            updatedExpense.time = btnTime.text.toString()
+
             val rowsAffected = updatedExpense.update()
             Log.d(TAG, ": $rowsAffected")
             Log.d(TAG, """
