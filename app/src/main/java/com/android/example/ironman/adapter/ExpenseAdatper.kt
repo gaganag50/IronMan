@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.android.example.ironman.R
 import com.android.example.ironman.db.Expense
-import java.text.DateFormat
 import java.util.*
 
 
@@ -30,18 +29,16 @@ class ExpenseAdatper(val data: ArrayList<Expense>) : RecyclerView.Adapter<Expens
     }
 
 
-
     class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(expense: Expense) {
 
 
-
             itemView.findViewById<TextView>(R.id.tvtotal).text = expense.money.toString()
             itemView.findViewById<TextView>(R.id.tvCategory).text = expense.catergory
             itemView.findViewById<TextView>(R.id.tvNote).text = expense.description
-            val format2 = DateFormat.getDateTimeInstance().format(Date(expense.time))
-            itemView.findViewById<TextView>(R.id.tvTime).text = format2
+            itemView.findViewById<TextView>(R.id.tvDate).text = expense.date
+            itemView.findViewById<TextView>(R.id.tvTime).text = expense.time
 
         }
 

@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.DialogFragment
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.DateFormat
 import java.util.*
 
@@ -17,7 +15,7 @@ import java.util.*
 class DatePickerFragment(val textView: TextView) : DialogFragment(), DatePickerDialog.OnDateSetListener {
 
 
-val TAG: String = "DatePickerFrag"
+    val TAG: String = "DatePickerFrag"
 
     private lateinit var calendar: Calendar
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
