@@ -6,12 +6,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.R
+import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_main.*
@@ -61,25 +62,31 @@ class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener 
     }
 
     private fun refereshList() {
+        val count = SugarRecord.count<Expense>(Expense::class.java)
+        Log.d(TAG, ": count $count")
+        if (count != -1L) {
 
-        val expenses = SugarRecord.listAll(Expense::class.java)
-        val listOfExpenses = ArrayList<Expense>(expenses.toList())
-        if (listOfExpenses.size > 0) {
-            empty_view.visibility = View.INVISIBLE
-        } else {
-            empty_view.visibility = View.VISIBLE
+
+            val expenses = SugarRecord.listAll(Expense::class.java)
+            val listOfExpenses = ArrayList<Expense>(expenses.toList())
+            Log.d(TAG, ": listOfExpenses ${listOfExpenses.size}")
+
+            if (listOfExpenses.size > 0) {
+                empty_view.visibility = View.INVISIBLE
+            } else {
+                empty_view.visibility = View.VISIBLE
+            }
+            rvList.layoutManager = LinearLayoutManager(this)
+            val adapter = ExpenseAdatper(listOfExpenses)
+
+
+
+
+            rvList.adapter = adapter
+            adapter.notifyDataSetChanged()
+            rvList.addOnItemTouchListener(RecyclerItemTouch(this@MainActivity, rvList, this))
+
         }
-        rvList.layoutManager = LinearLayoutManager(this)
-        val adapter = ExpenseAdatper(listOfExpenses)
-
-
-
-
-        rvList.adapter = adapter
-        adapter.notifyDataSetChanged()
-        rvList.addOnItemTouchListener(RecyclerItemTouch(this@MainActivity, rvList, this))
-
-
     }
 
     override fun onItemClick(view: View, position: Int) {

@@ -16,18 +16,39 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.android.example.ironman.R
+import com.android.example.ironman.R.string.month
 import com.android.example.ironman.date.DatePickerFragment
 import com.android.example.ironman.date.DateTime
 import com.android.example.ironman.date.TimePickerFragment
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 
 
-class EditActivity : AppCompatActivity() {
+class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
+    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        populateSetDate(year, month + 1, dayOfMonth)
+
+    }
+
+    private fun populateSetDate(year: Int, montht: Int, day: Int) {
+
+        Log.d("IncomeAct", "populateSetDate: ")
+        if (day <= 9 && month <= 9) {
+            btnAttendanceDate.setText("0$day/0$month/$year")
+        } else if (day <= 9 && month > 9) {
+            btnAttendanceDate.setText("0$day/$month/$year")
+        } else if (day > 9 && month <= 9) {
+            btnAttendanceDate.setText("" + day + "/" + "0" + month + "/" + year)
+        } else {
+            btnAttendanceDate.setText("" + day + "/" + month + "/" + year)
+        }
+    }
+
     var mCurrentExpenseUri: Uri? = null
     var Category = "Others"
     val TAG: String = "EditAct"
@@ -71,21 +92,35 @@ class EditActivity : AppCompatActivity() {
 
         }
 
-        val datetime = DateTime()
-        datetime.setTime(btnTime)
 
-        datetime.setDate(btnAttendanceDate)
-        btnTime.setOnClickListener {
-            // Initialize a new TimePickerFragment
-            val newFragment = TimePickerFragment(btnTime)
-            // Show the time picker dialog
-            newFragment.show(fragmentManager, "Time Picker")
-        }
-        btnAttendanceDate.setOnClickListener {
-            val newFragment2 = DatePickerFragment(btnAttendanceDate)
-            newFragment2.show(fragmentManager, "Date Picker")
 
-        }
+//        btnTime.setOnClickListener {
+//            // Initialize a new TimePickerFragment
+//            val newFragment = TimePickerFragment(btnTime)
+//            // Show the time picker dialog
+//            newFragment.show(fragmentManager, "Time Picker")
+//        }
+//        val newFragment2 = DatePickerFragment(btnAttendanceDate)
+//        btnAttendanceDate.setOnClickListener {
+//
+////            newFragment2.show(fragmentManager, "Date Picker")
+//
+//
+//
+//            val now = Calendar.getInstance()
+//            val dpd = DatePickerDialog.newInstance(
+//                    this@EditActivity,
+//                    now.get(Calendar.YEAR),
+//                    now.get(Calendar.MONTH),
+//                    now.get(Calendar.DAY_OF_MONTH)
+//            )
+//            dpd.show(fragmentManager, "Datepickerdialog")
+//            val datetime = DateTime()
+//            datetime.setTime(btnTime)
+//            datetime.setDate(btnAttendanceDate)
+//
+//
+//        }
 
         etTotal.setOnTouchListener(mTouchListener)
         spinner_category.setOnTouchListener(mTouchListener)
@@ -187,58 +222,7 @@ class EditActivity : AppCompatActivity() {
                 return
             }
 
-            val cal = Calendar.getInstance()
-            val time = cal.getTime()    // Sun Jul 22 18:22:05 GMT+05:30 2018
-            Toast.makeText(this@EditActivity, "" + time, Toast.LENGTH_SHORT).show()
-            Log.d(TAG, ": $time")
 
-
-            val originalString = "2010-07-14 09:00:02"
-            val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString)
-            val newString = SimpleDateFormat("H:mm").format(date) // 9:00
-
-
-            val date2: Date = Date() // your date
-            val cal2 = Calendar.getInstance()
-            cal.time = date2
-            val year2 = cal.get(Calendar.YEAR)
-            val month2 = cal.get(Calendar.MONTH)
-            val day2 = cal.get(Calendar.DAY_OF_MONTH)
-            Log.d(TAG, ":  $cal2 \n $year2 \n $month2  \n $day2")
-            // java.util.GregorianCalendar[
-            // time=1532263925751,areFieldsSet=true,lenient=true,zone=Asia/Calcutta,firstDayOfWeek=1,minimalDaysInFirstWeek=1,
-            // ERA=1,YEAR=2018,MONTH=6,WEEK_OF_YEAR=30,WEEK_OF_MONTH=4,DAY_OF_MONTH=22,DAY_OF_YEAR=203,DAY_OF_WEEK=1,
-            // DAY_OF_WEEK_IN_MONTH=4,AM_PM=1,HOUR=6,HOUR_OF_DAY=18,MINUTE=22,SECOND=5,MILLISECOND=751,ZONE_OFFSET=19800000,
-            // DST_OFFSET=0] 2010 6 14
-
-
-            // cal -->
-            // year2 --> 2018
-            // month2 --> 6
-            // day2 --> 22
-
-
-            // better
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val date3 = Date()
-                val localDate = date3.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-
-                val year = localDate.year
-                val month = localDate.monthValue
-                val day = localDate.dayOfMonth
-                Log.d(TAG, ": $localDate $year $month $day")
-
-            }
-            val simpleDateFormat = SimpleDateFormat("EEEEEE")
-            Log.d(TAG, ": $simpleDateFormat")
-
-            val time1 = cal.time
-            Log.d(TAG, "time: $time1")
-
-            val ti = SimpleDateFormat("EEEEEE").format(cal.getTime())
-            Log.d(TAG, ": $ti")
-
-            Toast.makeText(this@EditActivity, "" + ti, Toast.LENGTH_SHORT).show()
 
             val expense = Expense(
                     money = total.toInt(),
@@ -250,9 +234,13 @@ class EditActivity : AppCompatActivity() {
 
 
             if (addExpense == -1L) {
+                Log.d(TAG, ": expense not saved")
+
                 Toast.makeText(this, getString(R.string.editor_insert_expense_failed),
                         Toast.LENGTH_SHORT).show()
             } else {
+                Log.d(TAG, ": expense saved")
+
                 Toast.makeText(this, getString(R.string.editor_insert_expense_successful),
                         Toast.LENGTH_SHORT).show()
             }

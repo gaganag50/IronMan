@@ -7,12 +7,13 @@ import android.app.DialogFragment
 import android.os.Bundle
 import android.widget.DatePicker
 import android.widget.TextView
-import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.DateFormat
 import java.util.*
 
 @SuppressLint("ValidFragment")
 class DatePickerFragment(val textView: TextView) : DialogFragment(), DatePickerDialog.OnDateSetListener {
+
 
 
     private lateinit var calendar: Calendar
@@ -26,6 +27,7 @@ class DatePickerFragment(val textView: TextView) : DialogFragment(), DatePickerD
 
         return DatePickerDialog(
                 activity,
+
                 android.R.style.Theme_Holo_Light_Dialog_NoActionBar_MinWidth,
                 this,
                 year,
@@ -35,14 +37,9 @@ class DatePickerFragment(val textView: TextView) : DialogFragment(), DatePickerD
     }
 
 
-    override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
-        Toast.makeText(
-                activity,
-                "Date Set : ${formatDate(year, month, day)}"
-                , Toast.LENGTH_SHORT
-        ).show()
-
-        textView.text = formatDate(year, month, day)
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        val date = "You picked the following date: " + dayOfMonth + "/" + (month + 1) + "/" + year
+        btnAttendanceDate.setText(date)
     }
 
 

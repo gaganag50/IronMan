@@ -6,7 +6,7 @@ import com.orm.SugarRecord
 class Expense : SugarRecord {
     var money: Int = 0
     var catergory: String? = null
-    var description: String? = null
+    var description: String? = ""
     var time: Long = 0L
 
 
