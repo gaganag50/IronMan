@@ -16,33 +16,25 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.android.example.ironman.R
-import com.android.example.ironman.date.DatePickerFragment
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.DateFormat
-import java.text.SimpleDateFormat
+import java.text.DateFormatSymbols
 import java.util.*
 
 
 class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     val TAG: String = "EditAct"
-
-
     var mCurrentExpenseUri: Uri? = null
-    var Category = "Others"
-
-
+    var Category = "General"
     private var mExpenseHasChanged: Boolean = false
-
-
     private val mTouchListener = View.OnTouchListener { view, motionEvent ->
         mExpenseHasChanged = true
         false
     }
-
 
     fun getMonthName(month: Int): String {
         when (month + 1) {
@@ -73,23 +65,11 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         return ""
     }
 
+
     override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
         val month = getMonthName(monthOfYear)
         val date = "$month $dayOfMonth, $year"
         btnAttendanceDate.setText(date)
-    }
-
-    private fun getAMPM(hour: Int): String {
-        return if (hour > 11) "PM" else "AM"
-    }
-
-    private fun getHourAMPM(hour: Int): Int {
-        // Return the hour value for AM PM time format
-        var modifiedHour = if (hour > 11) hour - 12 else hour
-        if (modifiedHour == 0) {
-            modifiedHour = 12
-        }
-        return modifiedHour
     }
 
     override fun onTimeSet(view: TimePickerDialog?, hourOfDay: Int, minute: Int, second: Int) {
@@ -107,12 +87,31 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         btnTime.setText(date)
     }
 
-    private fun getMonthNumber(monthName: String): Int {
-        val date = SimpleDateFormat("MMM").parse(monthName)
-        val cal = Calendar.getInstance()
-        cal.time = date
-        val getMonth = cal.get(Calendar.MONTH)
-        return getMonth
+    private fun getAMPM(hour: Int): String {
+        return if (hour > 11) "PM" else "AM"
+    }
+
+    private fun getHourAMPM(hour: Int): Int {
+        var modifiedHour = if (hour > 11) hour - 12 else hour
+        if (modifiedHour == 0) {
+            modifiedHour = 12
+        }
+        return modifiedHour
+    }
+
+
+    private fun getMonthNumber(month: String): Int {
+        val dfs = DateFormatSymbols()
+        val months = dfs.shortMonths
+
+
+        for (i in 0..11) {
+            if (months[i].equals(month, ignoreCase = true)) {
+                return i // month index is zero-based as usual in old JDK pre 8!
+            }
+        }
+
+        return -1 // no match
     }
 
 
@@ -127,6 +126,8 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
         if (mCurrentExpenseUri == null) {
             title = getString(R.string.editor_activity_title_add_expense)
+            btnAttendanceDate.text = DateFormat.getDateInstance().format(Date(System.currentTimeMillis()))
+            btnTime.text = DateFormat.getTimeInstance().format(Date(System.currentTimeMillis()))
             invalidateOptionsMenu()
 
         } else {
@@ -139,28 +140,28 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
             val initialMoney = updatedExpense?.money.toString()
             val initialCategory = updatedExpense?.catergory
+            val initialdescription = updatedExpense?.description
+            val initialdate = updatedExpense?.date
+            val initialtime = updatedExpense?.time
+            Log.d(TAG, ": initialMoney $initialMoney")
+            Log.d(TAG, ": initialCategory $initialCategory")
+            Log.d(TAG, ": initialdescription $initialdescription")
+            Log.d(TAG, ": initialdate $initialdate")
+            Log.d(TAG, ": initialtime $initialtime")
+
+
+
             if (initialCategory != null) {
                 setupSpinner(initialCategory)
             }
             etTotal.setText(initialMoney)
+            etNote.setText(initialdescription)
+            btnTime.setText(initialtime)
+            btnAttendanceDate.setText(initialdate)
 
         }
 
 
-//        btnTime.setOnClickListener {
-//            // Initialize a new TimePickerFragment
-//            val newFragment = TimePickerFragment(btnTime)
-//            // Show the time picker dialog
-//            newFragment.show(fragmentManager, "Time Picker")
-//        }
-
-
-//        val format2 = DateFormat.getDateTimeInstance().format(Date(expense.time))
-//        itemView.findViewById<TextView>(R.id.tvTime).text = format2
-
-
-        btnAttendanceDate.text = DateFormat.getDateInstance().format(Date(System.currentTimeMillis()))
-        btnTime.text = DateFormat.getTimeInstance().format(Date(System.currentTimeMillis()))
 
 
         btnAttendanceDate.setOnClickListener { displayDate() }
@@ -276,7 +277,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         dpd.setOkText(getString(R.string.okTextDatePicker))
 
         dpd.setHighlightedDays(arrayOf(now))
-        DatePickerFragment(btnAttendanceDate)
+
 
     }
 
