@@ -1,5 +1,6 @@
 package com.android.example.ironman.ui
 
+import android.app.AlertDialog
 import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
@@ -10,7 +11,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import com.android.example.ironman.R
 import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.db.Expense
@@ -19,9 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener {
-    override fun onLongItemClick(view: View?, position: Int) {
 
-    }
 
     val TAG: String = "MainAct"
 
@@ -33,6 +31,8 @@ class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener 
         fab.setOnClickListener {
             startActivity(Intent(this@MainActivity, EditActivity::class.java))
         }
+
+        rvList.addOnItemTouchListener(RecyclerItemTouch(this@MainActivity, rvList, this))
         refereshList()
 
 
@@ -84,19 +84,41 @@ class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener 
 
             rvList.adapter = adapter
             adapter.notifyDataSetChanged()
-            rvList.addOnItemTouchListener(RecyclerItemTouch(this@MainActivity, rvList, this))
+
 
         }
     }
 
     override fun onItemClick(view: View, position: Int) {
-        val textView = view.findViewById(R.id.tvtotal) as TextView
         val i = Intent(this@MainActivity, EditActivity::class.java)
         val currentExpenseUri = ContentUris.withAppendedId(
                 Uri.parse("content://com.android.example.ironman"), position.toLong())
         i.data = currentExpenseUri
         startActivity(i)
 
+
+    }
+
+    override fun onLongItemClick(view: View?, position: Int) {
+        val ID = position + 1
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(R.string.delete_dialog_msg)
+        builder.setPositiveButton(R.string.delete) { dialog, id ->
+            Log.d(TAG, ": setPositiveButton called")
+            val expense = SugarRecord.findById(Expense::class.java, ID.toLong())
+            Log.d(TAG, ": expense $expense")
+
+            expense?.delete()
+            refereshList()
+        }
+        builder.setNegativeButton(R.string.cancel) { dialog, id ->
+
+            dialog?.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+        Log.d(TAG, ": onLongClick Called")
 
     }
 

@@ -35,7 +35,6 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         mExpenseHasChanged = true
         false
     }
-//    val stringArray = resources.getStringArray(R.array.array_category_options)
 
     fun getMonthName(month: Int): String {
         when (month + 1) {
@@ -119,6 +118,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
+        val stringArray = resources.getStringArray(R.array.array_category_options)
 
 
         val intent = intent
@@ -130,14 +130,15 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             btnAttendanceDate.text = DateFormat.getDateInstance().format(Date(System.currentTimeMillis()))
             btnTime.text = DateFormat.getTimeInstance().format(Date(System.currentTimeMillis()))
             invalidateOptionsMenu()
-            setupSpinner(Category)
+            setupSpinner(0)
 
         } else {
             val id = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
             Log.d(TAG, ": " + id)
 
             title = getString(R.string.editor_activity_title_edit_expense)
-            val updatedExpense = SugarRecord.findById(Expense::class.java, id + 1)
+
+            val updatedExpense = getExpenseById(id)
             Log.d(TAG, ": " + updatedExpense)
 
             val initialMoney = updatedExpense?.money.toString()
@@ -152,10 +153,10 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             Log.d(TAG, ": initialtime $initialtime")
 
 
-
+            val index = stringArray.indexOf(initialCategory)
 
             if (initialCategory != null) {
-                setupSpinner(initialCategory)
+                setupSpinner(index)
             }
 
             etTotal.setText(initialMoney)
@@ -179,6 +180,11 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
 
+    }
+
+    private fun getExpenseById(id: Long?): Expense? {
+        val expen = SugarRecord.findById(Expense::class.java, id?.plus(1L))
+        return expen
     }
 
     private fun displayTime() {
@@ -285,7 +291,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
     }
 
 
-    fun setupSpinner(category: String) {
+    fun setupSpinner(category: Int) {
 //        val indexOf = stringArray.indexOf(category)
 
         val categorySpinnerAdapter =
@@ -316,7 +322,8 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             }
         })
 
-//        spinner_category.setSelection(indexOf)
+
+        spinner_category.setSelection(category)
     }
 
 
@@ -402,28 +409,30 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
                         Toast.LENGTH_SHORT).show()
             }
         } else {
-            val id = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
-            Log.d(TAG, "id: $id")
+            val ID = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
 
-            val updatedExpense = SugarRecord.findById(Expense::class.java, id + 1)
-            updatedExpense.money = etTotal.text.toString().toInt()
-            updatedExpense.description = etNote.text.toString()
-            updatedExpense.date = btnAttendanceDate.text.toString()
-            updatedExpense.time = btnTime.text.toString()
+            val updatedExpense = getExpenseById(ID)
+            updatedExpense?.let {
+                it.money = etTotal.text.toString().toInt()
+                it.description = etNote.text.toString()
+                it.date = btnAttendanceDate.text.toString()
+                it.time = btnTime.text.toString()
 
-            val rowsAffected = updatedExpense.update()
-            Log.d(TAG, ": $rowsAffected")
-            Log.d(TAG, """
-                : ${updatedExpense.money} ${updatedExpense.catergory} ${updatedExpense.time}
+                val rowsAffected = it.update()
+                Log.d(TAG, ": $rowsAffected")
+                Log.d(TAG, """
+                : ${it.money} ${it.catergory} ${it.time}
                 """.trimIndent())
 
-            if (rowsAffected == 0L) {
-                Toast.makeText(this, getString(R.string.editor_update_expense_failed),
-                        Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, getString(R.string.editor_update_expense_successful),
-                        Toast.LENGTH_SHORT).show()
+                if (rowsAffected == 0L) {
+                    Toast.makeText(this, getString(R.string.editor_update_expense_failed),
+                            Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, getString(R.string.editor_update_expense_successful),
+                            Toast.LENGTH_SHORT).show()
+                }
             }
+
 
         }
 
@@ -454,7 +463,8 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         val builder = AlertDialog.Builder(this)
         builder.setMessage(R.string.delete_dialog_msg)
         builder.setPositiveButton(R.string.delete) { dialog, id ->
-
+            val ID = java.lang.Long.valueOf(mCurrentExpenseUri?.getLastPathSegment())
+            deletingExpense(ID)
         }
         builder.setNegativeButton(R.string.cancel) { dialog, id ->
 
@@ -463,6 +473,12 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
         val alertDialog = builder.create()
         alertDialog.show()
+    }
+
+    private fun deletingExpense(id: Long?) {
+        val expense = getExpenseById(id)
+        expense?.delete()
+        finish()
     }
 
     private fun showUnsavedChangesDialog(
