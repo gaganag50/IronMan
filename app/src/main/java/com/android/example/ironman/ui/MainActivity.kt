@@ -1,10 +1,9 @@
 package com.android.example.ironman.ui
 
 import android.app.AlertDialog
-import android.content.ContentUris
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -18,11 +17,14 @@ import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener {
+class MainActivity : AppCompatActivity() {
 
 
-    val TAG: String = "MainAct"
+    private val tag: String = "MainAct"
+    private lateinit var adapter: ExpenseAdatper
 
+    private var initialCount: Long = 0
+    private lateinit var listOfExpenses: ArrayList<Expense>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,10 +34,67 @@ class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener 
             startActivity(Intent(this@MainActivity, EditActivity::class.java))
         }
 
-        rvList.addOnItemTouchListener(RecyclerItemTouch(this@MainActivity, rvList, this))
-        refereshList()
+        initialCount = SugarRecord.count<Expense>(Expense::class.java)
 
 
+
+
+        if (initialCount >= 0) {
+
+
+            listOfExpenses = ArrayList(SugarRecord.listAll<Expense>(Expense::class.java).toList())
+            listOfExpenses.size
+            showingEmptyView()
+            adapter = ExpenseAdatper(
+                    listOfExpenses,
+                    { position: Int -> onItemClick(position) }
+            ) { position: Int -> onLongItemClick(position) }
+
+            rvList.layoutManager = LinearLayoutManager(this)
+            rvList.adapter = adapter
+
+        }
+
+
+    }
+
+    private fun showingEmptyView() =
+            when {
+                listOfExpenses.isEmpty() -> {
+                    empty_view.visibility = View.VISIBLE
+
+
+                    Snackbar.make(rvList, "click the add button to add an expense", Snackbar.LENGTH_LONG).show()
+                }
+                else -> empty_view.visibility = View.INVISIBLE
+            }
+
+
+
+
+    override fun onResume() {
+        super.onResume()
+
+        val newCount = SugarRecord.count<Expense>(Expense::class.java)
+
+
+        if (newCount > initialCount) {
+            refreshList()
+            initialCount = newCount
+
+        }
+
+
+
+    }
+
+    private fun refreshList() {
+        val list = ArrayList(SugarRecord.listAll<Expense>(Expense::class.java).toList())
+
+
+
+        showingEmptyView()
+        adapter.updateExpenseListItems(list)
     }
 
 
@@ -56,91 +115,45 @@ class MainActivity : AppCompatActivity(), RecyclerItemTouch.OnItemClickListener 
 
     private fun settings() = startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
 
-    override fun onResume() {
-        super.onResume()
-        refereshList()
-    }
 
-    private fun refereshList() {
-        val count = SugarRecord.count<Expense>(Expense::class.java)
-        Log.d(TAG, ": count $count")
-        if (count != -1L) {
+    private fun onItemClick(position: Int) {
 
-
-            val expenses = SugarRecord.listAll(Expense::class.java)
-            val listOfExpenses = ArrayList<Expense>(expenses.toList())
-            Log.d(TAG, ": listOfExpenses ${listOfExpenses.size}")
-
-            if (listOfExpenses.size > 0) {
-                empty_view.visibility = View.INVISIBLE
-            } else {
-                empty_view.visibility = View.VISIBLE
-            }
-            rvList.layoutManager = LinearLayoutManager(this)
-            val adapter = ExpenseAdatper(listOfExpenses)
-
-
-
-
-            rvList.adapter = adapter
-            adapter.notifyDataSetChanged()
-
-
-        }
-    }
-
-    override fun onItemClick(view: View, position: Int) {
         val i = Intent(this@MainActivity, EditActivity::class.java)
-        val currentExpenseUri = ContentUris.withAppendedId(
-                Uri.parse("content://com.android.example.ironman"), position.toLong())
-        i.data = currentExpenseUri
+
+        i.putExtra("ID", adapter.getId(position))
+
         startActivity(i)
 
 
     }
 
-    override fun onLongItemClick(view: View?, position: Int) {
-        val ID = position + 1
+    private fun onLongItemClick(position: Int) {
+        val ID = position
+        showDeleteMessage(ID)
+
+    }
+
+    private fun showDeleteMessage(ID: Int) {
+
         val builder = AlertDialog.Builder(this)
         builder.setMessage(R.string.delete_dialog_msg)
-        builder.setPositiveButton(R.string.delete) { dialog, id ->
-            Log.d(TAG, ": setPositiveButton called")
-            val expense = SugarRecord.findById(Expense::class.java, ID.toLong())
-            Log.d(TAG, ": expense $expense")
+        builder.setPositiveButton(R.string.delete) { _, _ ->
 
-            expense?.delete()
-            refereshList()
+
+            val expense = adapter.getItem(ID)
+            refreshList()
+            expense.delete()
+            initialCount -= 1
+            refreshList()
         }
-        builder.setNegativeButton(R.string.cancel) { dialog, id ->
-
+        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
             dialog?.dismiss()
         }
 
         val alertDialog = builder.create()
         alertDialog.show()
-        Log.d(TAG, ": onLongClick Called")
-
     }
 
-//    override fun onLongItemClick(view: View?, position: Int) {
-//
-//        AlertDialog.Builder(this@MainActivity)
-//                .setMessage(R.string.delete_dialog_msg)
-//                .setPositiveButton(R.string.delete) { dialog, id ->
-//                    val expense = SugarRecord.findById(Expense::class.java, id + 1)
-//                    expense.delete()
-//
-//
-//                }
-//                .setNegativeButton(R.string.cancel)
-//                { dialog, _ ->
-//
-//                    dialog?.dismiss()
-//                }
-//
-//                .create()
-//                .show()
-//    }
 
 }
 
