@@ -1,6 +1,7 @@
 package com.android.example.ironman.adapter
 
 import android.content.Context
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +10,6 @@ import android.widget.TextView
 import com.android.example.ironman.R
 import com.android.example.ironman.db.Expense
 import java.util.*
-import android.text.method.TextKeyListener.clear
-import android.support.v7.util.DiffUtil
-
-
 
 
 class ExpenseAdatper(

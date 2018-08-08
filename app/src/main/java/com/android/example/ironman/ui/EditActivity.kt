@@ -154,10 +154,6 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             Log.d(TAG, ": initialtime $initialtime")
 
 
-
-
-
-
             val index = stringArray.indexOf(initialCategory)
 
             if (initialCategory != null) {
@@ -183,6 +179,11 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         spinner_category.setOnTouchListener(mTouchListener)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        fabSave.setOnClickListener {
+            saveExpense()
+            finish()
+        }
 
 
     }
@@ -383,10 +384,6 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
                 val time = btnTime.text.toString()
                 val toString = btnAttendanceDate.text.toString()
-
-
-
-
 
 
                 val expense = Expense(

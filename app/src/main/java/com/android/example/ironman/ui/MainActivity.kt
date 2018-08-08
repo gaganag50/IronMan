@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,9 +15,6 @@ import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_main.*
-import android.support.v7.widget.DividerItemDecoration
-
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -75,8 +72,6 @@ class MainActivity : AppCompatActivity() {
             }
 
 
-
-
     override fun onResume() {
         super.onResume()
 
@@ -88,7 +83,6 @@ class MainActivity : AppCompatActivity() {
             initialCount = newCount
 
         }
-
 
 
     }
