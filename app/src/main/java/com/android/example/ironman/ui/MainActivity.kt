@@ -15,6 +15,9 @@ import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.db.Expense
 import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_main.*
+import android.support.v7.widget.DividerItemDecoration
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -51,6 +54,8 @@ class MainActivity : AppCompatActivity() {
             ) { position: Int -> onLongItemClick(position) }
 
             rvList.layoutManager = LinearLayoutManager(this)
+            rvList.addItemDecoration(DividerItemDecoration(rvList.context, DividerItemDecoration.VERTICAL))
+
             rvList.adapter = adapter
 
         }

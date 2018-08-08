@@ -303,7 +303,6 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
 
         spinner_category.adapter = categorySpinnerAdapter
-        Log.d(TAG, ": abcdef1")
 
 
         spinner_category.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -312,20 +311,15 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.d(TAG, ": abcdef2")
 
                 val selection = parent?.getItemAtPosition(position) as String
-                Log.d(TAG, ": abcdef3")
 
                 if (!TextUtils.isEmpty(selection)) {
-                    Log.d(TAG, ": abcdef4")
 
 
                     categoryOfExpense = selection
-                    Log.d(TAG, ": abcdef5")
 
                 }
-                Log.d(TAG, ": abcdef6")
 
             }
         }
