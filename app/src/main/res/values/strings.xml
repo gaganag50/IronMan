@@ -266,6 +266,7 @@
     <string name="descp">Add description</string>
     <string name="okTextDatePicker">SELECT DATE</string>
     <string name="timeInPM">PM</string>
+    <string name="addCategory">Add a new category</string>
 
 
 </resources>

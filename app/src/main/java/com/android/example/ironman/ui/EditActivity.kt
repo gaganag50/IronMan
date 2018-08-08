@@ -184,6 +184,9 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             saveExpense()
             finish()
         }
+        tvAddCategory.setOnClickListener {
+
+        }
 
 
     }

@@ -63,11 +63,20 @@
 
                 <Spinner
                     android:id="@+id/spinner_category"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_height="48dp"
                     android:paddingRight="16dp"
-                    android:spinnerMode="dropdown" />
+                    android:spinnerMode="dropdown"
+                    android:paddingEnd="16dp" />
+
             </LinearLayout>
+            <TextView android:id="@+id/tvAddCategory"
+                android:text="@string/addCategory"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:textSize="16sp"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
 
