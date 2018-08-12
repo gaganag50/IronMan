@@ -13,21 +13,19 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Toast
 import com.android.example.ironman.R
+import com.android.example.ironman.dateMonth.DateTimePicker
 import com.android.example.ironman.db.Expense
 import com.android.example.ironman.ui.MainActivity.Companion.expenseBox
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.DateFormat
-import java.text.DateFormatSymbols
 import java.util.*
 
-
-class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+class EditActivity : AppCompatActivity() {
     private val TAG: String = "EditAct"
-    private var idOfIncomingExpense: Long? = null
+    var idOfIncomingExpense: Long = 0
     var categoryOfExpense = "General"
     private var mExpenseHasChanged: Boolean = false
     private val mTouchListener = View.OnTouchListener { _, _ ->
@@ -35,95 +33,15 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         false
     }
 
-    private fun getMonthName(month: Int): String {
-        when (month + 1) {
-            1 -> return "Jan"
-
-            2 -> return "Feb"
-
-            3 -> return "Mar"
-
-            4 -> return "Apr"
-
-            5 -> return "May"
-
-            6 -> return "Jun"
-
-            7 -> return "Jul"
-
-            8 -> return "Aug"
-
-            9 -> return "Sep"
-
-            10 -> return "Oct"
-
-            11 -> return "Nov"
-
-            12 -> return "Dec"
-        }
-        return ""
-    }
-
-
-    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        val month = getMonthName(monthOfYear)
-        val date = "$month $dayOfMonth, $year"
-        btnAttendanceDate.text = date
-    }
-
-    override fun onTimeSet(view: TimePickerDialog?, hourOfDay: Int, minute: Int, second: Int) {
-        val hourAMPM = getHourAMPM(hourOfDay)
-        val ampm = getAMPM(hourOfDay)
-        val date: String?
-        date = when {
-            minute < 10 && second < 10 -> "$hourAMPM:0$minute:0$second $ampm"
-            minute > 10 && second < 10 -> "$hourAMPM:$minute:0$second $ampm"
-            minute < 10 && second > 10 -> "$hourAMPM:0$minute:$second $ampm"
-            else -> "$hourAMPM:$minute:$second $ampm"
-        }
-        btnTime.text = date
-    }
-
-    private fun getAMPM(hour: Int): String {
-        return if (hour > 11) "PM" else "AM"
-    }
-
-    private fun getHourAMPM(hour: Int): Int {
-        var modifiedHour = if (hour > 11) hour - 12 else hour
-        if (modifiedHour == 0) {
-            modifiedHour = 12
-        }
-        return modifiedHour
-    }
-
-
-    private fun getMonthNumber(month: String): Int {
-        val dfs = DateFormatSymbols()
-        val months = dfs.shortMonths
-
-
-        for (i in 0..11) {
-            if (months[i].equals(month, ignoreCase = true)) {
-                return i // month index is zero-based as usual in old JDK pre 8!
-            }
-        }
-
-        return -1 // no match
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
-        Log.d(TAG, ": onCreate")
 
+        val dateTimePicker = DateTimePicker(this@EditActivity, findViewById<Button>(R.id.btnAttendanceDate)
+                , findViewById<Button>(R.id.btnTime), fragmentManager)
         val stringArray = resources.getStringArray(R.array.array_category_options)
-
-
-
         idOfIncomingExpense = intent.getLongExtra("ID", 0)
-
-
         if (idOfIncomingExpense == 0L) {
             title = getString(R.string.editor_activity_title_add_expense)
             btnAttendanceDate.text = DateFormat.getDateInstance().format(Date(System.currentTimeMillis()))
@@ -133,45 +51,43 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
         } else {
 
-            val exp = expenseBox?.get(idOfIncomingExpense!!)
-
-
-
 
             title = getString(R.string.editor_activity_title_edit_expense)
+            val exp = expenseBox?.get(idOfIncomingExpense)
 
-            val initialMoney = exp!!.money
-            val initialCategory = exp!!.catergory
-            val initialdescription = exp!!.description
-            val initialdate = exp!!.date
-            val initialtime = exp!!.time
+            exp?.let {
+                val initialMoney = it.money
+                val initialCategory = it.catergory
+                val initialdescription = it.description
+                val initialdate = it.date
+                val initialtime = it.time
+
+                Log.d(TAG, """
+                    initialMoney $initialMoney
+                    initialCategory $initialCategory
+                    initialdescription $initialdescription
+                    initialdate $initialdate
+                    initialtime $initialtime
+                """.trimIndent())
 
 
-            Log.d(TAG, ": initialMoney $initialMoney")
-            Log.d(TAG, ": initialCategory $initialCategory")
-            Log.d(TAG, ": initialdescription $initialdescription")
-            Log.d(TAG, ": initialdate $initialdate")
-            Log.d(TAG, ": initialtime $initialtime")
+                setupSpinner(stringArray.indexOf(initialCategory))
 
 
-            val index = stringArray.indexOf(initialCategory)
-
-            if (initialCategory != null) {
-                setupSpinner(index)
+                etTotal.setText(initialMoney.toString())
+                etNote.setText(initialdescription)
+                btnTime.text = initialtime
+                btnAttendanceDate.text = initialdate
             }
 
-            etTotal.setText(initialMoney.toString())
-            etNote.setText(initialdescription)
-            btnTime.text = initialtime
-            btnAttendanceDate.text = initialdate
 
         }
 
 
 
 
-        btnAttendanceDate.setOnClickListener { displayDate() }
-        btnTime.setOnClickListener { displayTime() }
+        btnAttendanceDate.setOnClickListener { dateTimePicker.displayDate() }
+        btnTime.setOnClickListener { dateTimePicker.displayTime() }
 
 
 
@@ -189,111 +105,6 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             startActivity(i)
 
         }
-
-
-    }
-
-    private fun getExpenseById(id: Long?): Expense? {
-        return expenseBox!!.get(id!!)
-    }
-
-    private fun displayTime() {
-        val selectedTime = btnTime.text.toString()
-        val hourString: String?
-        val minString: String?
-        val secString: String?
-        val settingTimeInAMPM: String?
-
-        val length = selectedTime.length
-
-        Log.d(TAG, ": length = $length selectedTime= $selectedTime")
-
-        when {
-            selectedTime.length > 10 -> {
-                hourString = selectedTime.substring(0, 2)
-                minString = selectedTime.substring(3, 5)
-                secString = selectedTime.substring(6, 8)
-                settingTimeInAMPM = selectedTime.substring(9)
-
-            }
-            else -> {
-                hourString = selectedTime.substring(0, 1)
-                minString = selectedTime.substring(2, 4)
-                secString = selectedTime.substring(5, 7)
-                settingTimeInAMPM = selectedTime.substring(8)
-
-            }
-        }
-
-
-        Log.d(TAG, ": $hourString")
-        Log.d(TAG, ": $minString")
-        Log.d(TAG, ": $secString")
-        Log.d(TAG, ": $settingTimeInAMPM")
-
-        var hourInt = hourString.toInt()
-        if (settingTimeInAMPM == getString(R.string.timeInPM)) {
-            hourInt += 12
-        }
-
-
-        val dpd = TimePickerDialog.newInstance(
-                this@EditActivity,
-                hourInt,
-                minString.toInt(),
-                secString.toInt(),
-                true
-
-        )
-        dpd.show(fragmentManager, "Datepickerdialog")
-
-
-    }
-
-    private fun displayDate() {
-
-        val now = Calendar.getInstance()
-        val selectedDate = btnAttendanceDate.text.toString()
-        Log.d(TAG, ": $selectedDate")
-
-        val monthString = selectedDate.substring(0, 3)
-        val dateString: String?
-        val yearString: String?
-        when {
-            selectedDate.length == 11 -> {
-                dateString = selectedDate.substring(4, 5)
-                yearString = selectedDate.substring(7, 11)
-            }
-            else -> {
-                dateString = selectedDate.substring(4, 6)
-                yearString = selectedDate.substring(8, 12)
-
-            }
-        }
-
-
-        val monthNumber = getMonthNumber(monthString)
-        Log.d(TAG, ": ${selectedDate.length}")
-
-        Log.d(TAG, ": $yearString")
-        Log.d(TAG, ": $monthNumber")
-        Log.d(TAG, ": $dateString")
-
-
-        val dpd = DatePickerDialog.newInstance(
-                this@EditActivity,
-                yearString.toInt(),
-                monthNumber,
-                dateString.toInt()
-        )
-
-        dpd.show(fragmentManager, "Datepickerdialog")
-        dpd.version = DatePickerDialog.Version.VERSION_2
-
-
-        dpd.setOkText(getString(R.string.okTextDatePicker))
-
-        dpd.highlightedDays = arrayOf(now)
 
 
     }
@@ -381,8 +192,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
                 val total = etTotal.text.toString().trim()
                 val note = etNote.text.toString().trim()
 
-                if (idOfIncomingExpense == null &&
-                        TextUtils.isEmpty(total) && categoryOfExpense == getString(R.string.cat_others)) {
+                if (TextUtils.isEmpty(total) && categoryOfExpense == getString(R.string.cat_others)) {
 
                     return
                 }
@@ -398,7 +208,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
                         date = toString,
                         time = time
                 )
-                val addExpense = expenseBox!!.put(expense)
+                val addExpense = expenseBox?.put(expense)
 
 
                 if (addExpense == -1L) {
@@ -414,7 +224,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             else -> {
 
 
-                val updatedExpense = expenseBox!!.get(idOfIncomingExpense!!)
+                val updatedExpense = expenseBox!!.get(idOfIncomingExpense)
 
 
 
@@ -425,7 +235,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
                     it.date = btnAttendanceDate.text.toString()
                     it.time = btnTime.text.toString()
 
-                    val rowsAffected = expenseBox!!.put(it)
+                    val rowsAffected = expenseBox?.put(it)
 
 
                     if (rowsAffected == 0L) {
@@ -484,9 +294,12 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
         alertDialog.show()
     }
 
-    private fun deletingExpense(id: Long?) {
-        val expense = getExpenseById(id)
-        expenseBox!!.remove(expense)
+    private fun deletingExpense(id: Long) {
+        val expense = expenseBox?.get(id)
+        if (expense == null)
+            Toast.makeText(this, "Expense Cannot Be Deleted", Toast.LENGTH_SHORT).show()
+        else
+            expenseBox!!.remove(expense)
 
         finish()
     }

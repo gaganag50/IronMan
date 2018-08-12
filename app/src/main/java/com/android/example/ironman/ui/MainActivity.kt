@@ -21,13 +21,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-
-    private val tag: String = "MainAct"
-    private lateinit var adapter: ExpenseAdatper
-
-    private var initialCount: Long = 0
-    private lateinit var listOfExpenses: ArrayList<Expense>
-
     companion object {
 
         var boxStore = App.app?.boxStore
@@ -35,22 +28,29 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+    private val tag: String = "MainAct"
+    private lateinit var adapter: ExpenseAdatper
+
+    private var initialCount: Long? = 0
+    private lateinit var listOfExpenses: ArrayList<Expense>
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        fab.setOnClickListener {
-            startActivity(Intent(this@MainActivity, EditActivity::class.java))
-        }
-
-        initialCount = expenseBox!!.count()
 
 
+        fab.setOnClickListener { onFabClick() }
+
+        initialCount = expenseBox?.count()
 
 
-        if (initialCount >= 0) {
 
 
-            listOfExpenses = ArrayList(expenseBox?.all!!.toList())
+        if (initialCount!! >= 0) {
+            val list = expenseBox?.all!!.toList()
+            listOfExpenses = ArrayList(list)
             showingEmptyView()
             adapter = ExpenseAdatper(
                     listOfExpenses,
@@ -69,7 +69,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun swipeToDelete() {
+    private fun onFabClick() {
+        startActivity(Intent(this@MainActivity, EditActivity::class.java))
+    }
+
+    private fun swipeToDelete() {
         // Handling swipe to delete
         val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
@@ -84,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
                 val expense = adapter.getItem(position)
                 showDeleteMessage(position, true)
-                initialCount -= 1
+                initialCount?.minus(1)
 
 
             }
@@ -103,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(tag, ": expense $expense")
 
         refreshList()
-        initialCount += 1
+        initialCount?.plus(1)
     }
 
     private fun showingEmptyView() =
@@ -122,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         val newCount = expenseBox!!.count()
 
 
-        if (newCount > initialCount) {
+        if (newCount > initialCount!!) {
             refreshList()
             initialCount = newCount
 
@@ -186,7 +190,7 @@ class MainActivity : AppCompatActivity() {
             expenseBox!!.remove(expense)
 
 
-            initialCount -= 1
+            initialCount?.minus(1)
             refreshList()
             Snackbar.make(rvList, "Expense deleted", Snackbar.LENGTH_LONG)
                     .setAction("UNDO") {
