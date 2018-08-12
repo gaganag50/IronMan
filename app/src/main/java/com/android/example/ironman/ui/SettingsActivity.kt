@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.activity_settings.*
 
 
 class SettingsActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -24,6 +23,7 @@ class SettingsActivity : AppCompatActivity() {
             showAlertDialog(title, countryList, country)
 
         }
+
 
 
 
@@ -49,12 +49,12 @@ class SettingsActivity : AppCompatActivity() {
 
 
         }
-//        actionBar.setDisplayHomeAsUpEnabled(true)
 
         val actionBar = supportActionBar
         actionBar!!.setDisplayHomeAsUpEnabled(true)
 
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         NavUtils.navigateUpFromSameTask(this)

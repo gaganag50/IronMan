@@ -13,4 +13,8 @@
     <dimen name="appbar_height_offset">136dp</dimen>
     <dimen name="main_activity_margin">8dp</dimen>
 
+
+    <dimen name="carbon_toolbarHeight">56dp</dimen>
+    <dimen name="carbon_padding">16dp</dimen>
+
 </resources>

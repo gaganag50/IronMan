@@ -248,14 +248,23 @@
 
 
     <string name="cat_general">General</string>
+    <string name="cat_shopping">Shopping</string>
+
+
+
     <string name="cat_clothes">Clothes</string>
+    <string name="cat_pets">Pets</string>
+    <string name="cat_presents">Presents</string>
+
+    cat_presents
+
     <string name="cat_entertainment">Entertainment</string>
     <string name="cat_food">Food</string>
     <string name="cat_health">Health</string>
     <string name="cat_household">Household</string>
     <string name="cat_hygiene">Hygiene</string>
-    <string name="cat_pets">Pets</string>
-    <string name="cat_presents">Presents</string>
+    <string name="familyCatPets">Pets</string>
+    <string name="familyCatPresents">Presents</string>
     <string name="cat_sports">Sports</string>
     <string name="cat_transportation">Transportation</string>
     <string name="cat_others">Others</string>
@@ -267,6 +276,54 @@
     <string name="okTextDatePicker">SELECT DATE</string>
     <string name="timeInPM">PM</string>
     <string name="addCategory">Add a new category</string>
+    <string name="foodSubGroceries">Groceries</string>
+    <string name="foodSubOther">Other</string>
+    <string name="foodSubRestaurant">Restaurant</string>
+    <string name="foodSubSnack">Snack</string>
+    <string name="automobileSubRoadServices">Road Services</string>
+    <string name="automobileSubFuel">Fuel</string>
+    <string name="automobileSubInsurance">Insurance</string>
+    <string name="automobileSubLease">Lease</string>
+    <string name="automobileSubMaintenance">Maintenance</string>
+    <string name="automobileSubMileage">Mileage</string>
+    <string name="automobileSubOther">Other</string>
+    <string name="automobileRegistration">Registration</string>
+    <string name="entertainmentCatConcert">Concert</string>
+    <string name="entertainmentCatMovies">Movies</string>
+    <string name="entertainmentCatOther">Other</string>
+    <string name="entertainmentCatParty">Party</string>
+    <string name="entertainmentCatSports">Sports</string>
+    <string name="familyCatChildCare">Child Care</string>
+    <string name="familyCatChildEducation">Child Education</string>
+    <string name="familyCatOther">Other</string>
+    <string name="familyCatToy">Toy</string>
+    <string name="healthCareCatDental">Dental</string>
+    <string name="healthCareCatEyeCare">Eye Care</string>
+    <string name="healthCareCatHealthInsurance">Health Insurance</string>
+    <string name="healthCareCatMedical">Medical</string>
+    <string name="healthCareCatNutrition">Nutition</string>
+    <string name="healthCareCatOther">Other</string>
+    <string name="healthCareCatPrescription">Prescription</string>
+    <string name="travelCatAirplane">Airplane</string>
+    <string name="travelCatCarRental">Car Rental</string>
+    <string name="travelCatFood">Food</string>
+    <string name="travelCatHotel">Hotel</string>
+    <string name="travelCatMisc">Misc</string>
+    <string name="travelCatOther">Other</string>
+    <string name="travelCatTaxi">Taxi</string>
+    <string name="foodSubCafe">Cafe</string>
+    <string name="shoppingCatClothing">Clothing</string>
+    <string name="shoppingCatCarFootwear">Footwear</string>
+    <string name="shoppingCatElectronics">Electronics</string>
+    <string name="shoppingCatOther">Other</string>
+    <string name="shoppingCatAccessories">Accessories</string>
+    <string name="travelCatParkingFees">Parking Fees</string>
+    <string name="travelCatPetrol">Petrol</string>
+    <string name="familyCatFriendsLovers"><![CDATA[Friends & Lover]]></string>
+    <string name="healthCareCatPharmacy">Pharmacy</string>
+    <string name="cat_education">education</string>
+    <string name="shoppingCatBooks">Books</string>
+    <string name="shoppingCatPrintPhotocopy"><![CDATA[Print Out & Photocopy]]></string>
 
 
 </resources>

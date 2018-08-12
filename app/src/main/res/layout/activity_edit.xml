@@ -7,7 +7,11 @@
     android:fitsSystemWindows="true"
     tools:context="com.android.example.ironman.ui.EditActivity">
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -64,19 +68,21 @@
                 <Spinner
                     android:id="@+id/spinner_category"
                     android:layout_width="0dp"
-                    android:layout_weight="2"
                     android:layout_height="48dp"
+                    android:layout_weight="2"
+                    android:paddingEnd="16dp"
                     android:paddingRight="16dp"
-                    android:spinnerMode="dropdown"
-                    android:paddingEnd="16dp" />
+                    android:spinnerMode="dropdown" />
 
             </LinearLayout>
-            <TextView android:id="@+id/tvAddCategory"
-                android:text="@string/addCategory"
+
+            <TextView
+                android:id="@+id/tvAddCategory"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:textSize="16sp"
-                android:layout_height="wrap_content" />
+                android:text="@string/addCategory"
+                android:textSize="16sp" />
         </LinearLayout>
 
 
@@ -134,8 +140,8 @@
         android:src="@drawable/ic_done"
         android:tint="@android:color/white"
         app:backgroundTint="@color/colorPrimary"
-        app:fabSize="normal"
-        app:elevation="6dp" />
+        app:elevation="6dp"
+        app:fabSize="normal" />
 
 
 </android.support.design.widget.CoordinatorLayout>

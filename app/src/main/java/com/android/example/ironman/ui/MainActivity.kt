@@ -12,10 +12,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.android.example.ironman.App.App
 import com.android.example.ironman.R
 import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.db.Expense
-import com.orm.SugarRecord
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -28,15 +28,21 @@ class MainActivity : AppCompatActivity() {
     private var initialCount: Long = 0
     private lateinit var listOfExpenses: ArrayList<Expense>
 
+    companion object {
+
+        var boxStore = App.app?.boxStore
+        var expenseBox = boxStore?.boxFor(Expense::class.java)
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         fab.setOnClickListener {
             startActivity(Intent(this@MainActivity, EditActivity::class.java))
         }
 
-        initialCount = SugarRecord.count<Expense>(Expense::class.java)
+        initialCount = expenseBox!!.count()
 
 
 
@@ -44,8 +50,7 @@ class MainActivity : AppCompatActivity() {
         if (initialCount >= 0) {
 
 
-            listOfExpenses = ArrayList(SugarRecord.listAll<Expense>(Expense::class.java).toList())
-            listOfExpenses.size
+            listOfExpenses = ArrayList(expenseBox?.all!!.toList())
             showingEmptyView()
             adapter = ExpenseAdatper(
                     listOfExpenses,
@@ -53,13 +58,18 @@ class MainActivity : AppCompatActivity() {
             ) { position: Int -> onLongItemClick(position) }
 
             rvList.layoutManager = LinearLayoutManager(this)
-//            rvList.addItemDecoration(DividerItemDecoration(rvList.context, DividerItemDecoration.VERTICAL))
 
             rvList.adapter = adapter
 
         }
 
 
+        swipeToDelete()
+
+
+    }
+
+    fun swipeToDelete() {
         // Handling swipe to delete
         val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
@@ -83,19 +93,15 @@ class MainActivity : AppCompatActivity() {
 
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(rvList)
-
-
     }
 
     private fun showDeleteMessageOnSwipe(expense: Expense, position: Int) {
         refreshList()
-        expense.save()
+        expenseBox!!.put(expense)
         listOfExpenses.add(position, expense)
 
         Log.d(tag, ": expense $expense")
 
-//        listOfExpenses.add(position, expense)
-//        adapter.notifyItemInserted(position)
         refreshList()
         initialCount += 1
     }
@@ -113,7 +119,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val newCount = SugarRecord.count<Expense>(Expense::class.java)
+        val newCount = expenseBox!!.count()
 
 
         if (newCount > initialCount) {
@@ -126,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshList() {
-        val list = ArrayList(SugarRecord.listAll<Expense>(Expense::class.java).toList())
+        val list = ArrayList(expenseBox!!.all)
         Log.d(tag, ": list ${list.toList()}")
 
         adapter.updateExpenseListItems(list)
@@ -177,9 +183,9 @@ class MainActivity : AppCompatActivity() {
         builder.setMessage(R.string.delete_dialog_msg)
         val expense = adapter.getItem(ID)
         builder.setPositiveButton(R.string.delete) { _, _ ->
+            expenseBox!!.remove(expense)
 
 
-            expense.delete()
             initialCount -= 1
             refreshList()
             Snackbar.make(rvList, "Expense deleted", Snackbar.LENGTH_LONG)

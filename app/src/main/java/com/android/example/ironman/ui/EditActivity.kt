@@ -2,6 +2,7 @@ package com.android.example.ironman.ui
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
@@ -15,7 +16,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.android.example.ironman.R
 import com.android.example.ironman.db.Expense
-import com.orm.SugarRecord
+import com.android.example.ironman.ui.MainActivity.Companion.expenseBox
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.activity_edit.*
@@ -132,19 +133,18 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
         } else {
 
-
-            val exp = SugarRecord.findById<Expense>(Expense::class.java, idOfIncomingExpense)
+            val exp = expenseBox?.get(idOfIncomingExpense!!)
 
 
 
 
             title = getString(R.string.editor_activity_title_edit_expense)
 
-            val initialMoney = exp.money
-            val initialCategory = exp.catergory
-            val initialdescription = exp.description
-            val initialdate = exp.date
-            val initialtime = exp.time
+            val initialMoney = exp!!.money
+            val initialCategory = exp!!.catergory
+            val initialdescription = exp!!.description
+            val initialdate = exp!!.date
+            val initialtime = exp!!.time
 
 
             Log.d(TAG, ": initialMoney $initialMoney")
@@ -185,6 +185,8 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             finish()
         }
         tvAddCategory.setOnClickListener {
+            val i = Intent(this@EditActivity, CategoryAddition::class.java)
+            startActivity(i)
 
         }
 
@@ -192,7 +194,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
     }
 
     private fun getExpenseById(id: Long?): Expense? {
-        return SugarRecord.findById<Expense>(Expense::class.java, id?.plus(1L))
+        return expenseBox!!.get(id!!)
     }
 
     private fun displayTime() {
@@ -391,12 +393,12 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
                 val expense = Expense(
                         money = total.toInt(),
-                        category = categoryOfExpense,
-                        note = note,
+                        catergory = categoryOfExpense,
+                        description = note,
                         date = toString,
                         time = time
                 )
-                val addExpense = expense.save()
+                val addExpense = expenseBox!!.put(expense)
 
 
                 if (addExpense == -1L) {
@@ -412,7 +414,7 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
             else -> {
 
 
-                val updatedExpense = SugarRecord.findById<Expense>(Expense::class.java, idOfIncomingExpense)
+                val updatedExpense = expenseBox!!.get(idOfIncomingExpense!!)
 
 
 
@@ -423,7 +425,8 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
                     it.date = btnAttendanceDate.text.toString()
                     it.time = btnTime.text.toString()
 
-                    val rowsAffected = it.update()
+                    val rowsAffected = expenseBox!!.put(it)
+
 
                     if (rowsAffected == 0L) {
                         Toast.makeText(this, getString(R.string.editor_update_expense_failed),
@@ -483,7 +486,8 @@ class EditActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, Ti
 
     private fun deletingExpense(id: Long?) {
         val expense = getExpenseById(id)
-        expense?.delete()
+        expenseBox!!.remove(expense)
+
         finish()
     }
 
