@@ -1,8 +1,8 @@
 package com.android.example.ironman.ui
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Message
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -16,64 +16,77 @@ import com.android.example.ironman.App.App
 import com.android.example.ironman.R
 import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.db.Expense
+import com.android.example.ironman.ui.DeleteDialog.Companion.ShowMsgDialog
+import com.android.example.ironman.ui.EditActivity.Companion.extraForIntent
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+    val tag: String = "MainAct"
 
     companion object {
-
         var boxStore = App.app?.boxStore
         var expenseBox = boxStore?.boxFor(Expense::class.java)
-
     }
 
-
-    private val tag: String = "MainAct"
     private lateinit var adapter: ExpenseAdatper
 
-    private var initialCount: Long? = 0
     private lateinit var listOfExpenses: ArrayList<Expense>
+
+
+    /** for posting authentication attempts back to UI thread  */
+    val mHandler = DeleteDialog.Companion.IncomingHandler(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
+        val recyclerView = findViewById<RecyclerView>(R.id.rvList)
         fab.setOnClickListener { onFabClick() }
 
-        initialCount = expenseBox?.count()
+
+
+        listOfExpenses = ArrayList(expenseBox!!.all.toList())
+        showingEmptyView()
+
+        adapter = ExpenseAdatper(
+                listOfExpenses,
+                { position: Int -> onItemClick(position) }
+        ) { position: Int -> onLongItemClick(position, recyclerView) }
+
+        rvList.layoutManager = LinearLayoutManager(this)
+
+        rvList.adapter = adapter
 
 
 
+        swipeToDelete(listOfExpenses)
 
-        if (initialCount!! >= 0) {
-            val list = expenseBox?.all!!.toList()
-            listOfExpenses = ArrayList(list)
-            showingEmptyView()
-            adapter = ExpenseAdatper(
-                    listOfExpenses,
-                    { position: Int -> onItemClick(position) }
-            ) { position: Int -> onLongItemClick(position) }
 
-            rvList.layoutManager = LinearLayoutManager(this)
+    }
 
-            rvList.adapter = adapter
+    private fun refreshList() {
+        adapter.updateExpenseListItems(expenseBox!!.all.toList())
+        showingEmptyView()
 
+    }
+
+    private fun showingEmptyView() {
+
+
+        when {
+            listOfExpenses.isEmpty() -> {
+                empty_view.visibility = View.VISIBLE
+            }
+            else -> empty_view.visibility = View.INVISIBLE
         }
-
-
-        swipeToDelete()
-
-
     }
 
     private fun onFabClick() {
         startActivity(Intent(this@MainActivity, EditActivity::class.java))
     }
 
-    private fun swipeToDelete() {
+    private fun swipeToDelete(listOfExpenses: ArrayList<Expense>) {
         // Handling swipe to delete
         val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
@@ -85,10 +98,19 @@ class MainActivity : AppCompatActivity() {
                 //Remove swiped item from list and notify the RecyclerView
 
                 val position = viewHolder.adapterPosition
-
+                val id = adapter.getId(position)
                 val expense = adapter.getItem(position)
-                showDeleteMessage(position, true)
-                initialCount?.minus(1)
+                expenseBox!!.remove(id!!.toLong())
+                adapter.notifyItemRemoved(position)
+
+                Snackbar.make(rvList, "Expense Deleted", Snackbar.LENGTH_SHORT)
+                        .setAction("UNDO", View.OnClickListener { view ->
+                            expenseBox!!.put(expense)
+                            listOfExpenses.add(position, expense)
+                            adapter.notifyItemInserted(position)
+                        }).show()
+
+                refreshList()
 
 
             }
@@ -99,49 +121,13 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(rvList)
     }
 
-    private fun showDeleteMessageOnSwipe(expense: Expense, position: Int) {
-        refreshList()
-        expenseBox!!.put(expense)
-        listOfExpenses.add(position, expense)
-
-        Log.d(tag, ": expense $expense")
-
-        refreshList()
-        initialCount?.plus(1)
-    }
-
-    private fun showingEmptyView() =
-            when {
-                listOfExpenses.isEmpty() -> {
-                    empty_view.visibility = View.VISIBLE
-                    Snackbar.make(rvList, "click the add button to add an expense", Snackbar.LENGTH_LONG).show()
-                }
-                else -> empty_view.visibility = View.INVISIBLE
-            }
-
 
     override fun onResume() {
+        refreshList()
+
+
         super.onResume()
 
-        val newCount = expenseBox!!.count()
-
-
-        if (newCount > initialCount!!) {
-            refreshList()
-            initialCount = newCount
-
-        }
-
-
-    }
-
-    private fun refreshList() {
-        val list = ArrayList(expenseBox!!.all)
-        Log.d(tag, ": list ${list.toList()}")
-
-        adapter.updateExpenseListItems(list)
-        adapter.notifyDataSetChanged()
-        showingEmptyView()
 
     }
 
@@ -168,48 +154,41 @@ class MainActivity : AppCompatActivity() {
 
         val i = Intent(this@MainActivity, EditActivity::class.java)
 
-        i.putExtra("ID", adapter.getId(position))
+        i.putExtra(extraForIntent, adapter.getId(position))
 
         startActivity(i)
 
 
     }
 
-    private fun onLongItemClick(position: Int) {
-        val ID = position
-        showDeleteMessage(ID)
+
+    private fun onLongItemClick(position: Int, recyclerView: RecyclerView) {
+        val item = adapter.getItem(position)
+        ShowMsgDialog(this@MainActivity, "title", "message", mHandler, item, expenseBox)
 
     }
 
-    private fun showDeleteMessage(ID: Int, boolean: Boolean = false) {
 
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage(R.string.delete_dialog_msg)
-        val expense = adapter.getItem(ID)
-        builder.setPositiveButton(R.string.delete) { _, _ ->
-            expenseBox!!.remove(expense)
+    internal fun HandleMessage(msg: Message) {
+        val handlerMessage =
+                DeleteDialog.Companion.HandlerMessage.values()[msg.arg1]
+
+        when (handlerMessage) {
+            DeleteDialog.Companion.HandlerMessage.Yes -> {
+                refreshList()
 
 
-            initialCount?.minus(1)
-            refreshList()
-            Snackbar.make(rvList, "Expense deleted", Snackbar.LENGTH_LONG)
-                    .setAction("UNDO") {
-                        showDeleteMessageOnSwipe(expense, ID)
-                    }
-                    .show()
-        }
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
-
-            dialog?.dismiss()
-            if (boolean) {
-                showDeleteMessageOnSwipe(expense, ID)
             }
-        }
 
-        val alertDialog = builder.create()
-        alertDialog.show()
+            DeleteDialog.Companion.HandlerMessage.No -> {
+                Log.d(tag, ": no")
+
+            }
+        }//Do something ...
+        //Do something ...
     }
 
 
 }
+
 

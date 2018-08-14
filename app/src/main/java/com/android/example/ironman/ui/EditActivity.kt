@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
@@ -13,7 +14,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Toast
 import com.android.example.ironman.R
 import com.android.example.ironman.dateMonth.DateTimePicker
@@ -33,15 +33,22 @@ class EditActivity : AppCompatActivity() {
         false
     }
 
+    companion object {
+        val extraForIntent = "ID"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
 
-        val dateTimePicker = DateTimePicker(this@EditActivity, findViewById<Button>(R.id.btnAttendanceDate)
-                , findViewById<Button>(R.id.btnTime), fragmentManager)
+
+
+        val dateTimePicker = DateTimePicker(this@EditActivity, findViewById(R.id.btnAttendanceDate)
+                , findViewById(R.id.btnTime), fragmentManager)
+
         val stringArray = resources.getStringArray(R.array.array_category_options)
-        idOfIncomingExpense = intent.getLongExtra("ID", 0)
+        idOfIncomingExpense = intent.getLongExtra(extraForIntent, 0)
         if (idOfIncomingExpense == 0L) {
             title = getString(R.string.editor_activity_title_add_expense)
             btnAttendanceDate.text = DateFormat.getDateInstance().format(Date(System.currentTimeMillis()))
@@ -192,13 +199,16 @@ class EditActivity : AppCompatActivity() {
                 val total = etTotal.text.toString().trim()
                 val note = etNote.text.toString().trim()
 
-                if (TextUtils.isEmpty(total) && categoryOfExpense == getString(R.string.cat_others)) {
+                if (TextUtils.isEmpty(total) && categoryOfExpense == getString(R.string.cat_general)) {
+                    Toast.makeText(this, "please enter total money", Toast.LENGTH_SHORT).show()
 
                     return
                 }
 
                 val time = btnTime.text.toString()
                 val toString = btnAttendanceDate.text.toString()
+
+//                StringUtils.isEmpty(String str)
 
 
                 val expense = Expense(
@@ -295,11 +305,13 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun deletingExpense(id: Long) {
-        val expense = expenseBox?.get(id)
-        if (expense == null)
-            Toast.makeText(this, "Expense Cannot Be Deleted", Toast.LENGTH_SHORT).show()
-        else
-            expenseBox!!.remove(expense)
+
+        Log.d(TAG, ":idOfIncomingExpense $id ")
+
+        expenseBox!!.remove(id)
+
+
+
 
         finish()
     }
@@ -318,19 +330,6 @@ class EditActivity : AppCompatActivity() {
 
         val alertDialog = builder.create()
         alertDialog.show()
-    }
-
-
-    override fun onPause() {
-        Log.d(TAG, ": onPause")
-
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG, ": onDestroy")
-
-        super.onDestroy()
     }
 
 
