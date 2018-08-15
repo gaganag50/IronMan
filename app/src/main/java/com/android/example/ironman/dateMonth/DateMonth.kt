@@ -6,6 +6,7 @@ import java.text.DateFormatSymbols
 class DateMonth {
     companion object {
 
+
         fun getAMPM(hour: Int): String {
             return if (hour > 11) "PM" else "AM"
         }

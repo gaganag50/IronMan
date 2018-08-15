@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -60,6 +60,63 @@
     <style name="DatePickerTheme">
         <item name="mdtp_theme_dark">true</item>
     </style>
+
+    <!-- Buttons-->
+    <style name="ButtonTheme" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/button_color</item>
+
+        <item name="android:padding">0dp</item>
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
+    <style name="ButtonThemeWord" parent="ButtonTheme">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="button_group">
+        <item name="android:padding">8dp</item>
+    </style>
+
+
+    <!-- Input-->
+    <style name="inputTheme" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/primary_text_default_dark</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!-- History view-->
+    <style name="historyInputTheme">
+        <item name="android:textColor">@color/secondary_text_default_light</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="historyResultTheme">
+        <item name="android:textColor">@color/primary_text_default_light</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
+
+
+
+    <!-- Popup Menu-->
+    <style name="menuTheme" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:textColor">@color/abc_primary_text_light</item>
+    </style>
+
+    <style name="MyPopupMenu" parent="Widget.AppCompat.Light.PopupMenu">
+        <item name="android:textColor">@color/primary_text_default_light</item>
+    </style>
+
+    <style name="myPopupMenuTextAppearanceSmall" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
+        <item name="android:textColor">@color/primary_text_default_light</item>
+    </style>
+
+    <style name="myPopupMenuTextAppearanceLarge" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/primary_text_default_light</item>
+    </style>
+
+
 </resources>
 
 

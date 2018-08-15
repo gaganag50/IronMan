@@ -17,4 +17,9 @@
     <dimen name="carbon_toolbarHeight">56dp</dimen>
     <dimen name="carbon_padding">16dp</dimen>
 
+
+    <dimen name="fab_margin_vertical">-50dp</dimen>
+    <dimen name="input_margin_vertical">16dp</dimen>
+    <dimen name="input_margin_horizontal">32dp</dimen>
+
 </resources>

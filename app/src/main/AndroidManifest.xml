@@ -3,8 +3,8 @@
     package="com.android.example.ironman">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <application
 
+    <application
         android:name=".App.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,13 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -33,7 +32,11 @@
                 android:value="com.android.example.ironman.ui.MainActivity" />
         </activity>
         <activity android:name=".ui.CategoryAddition" />
-
+        <activity android:name=".ui.sampleList" />
+        <activity
+            android:name=".Calculator"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:name=".AboutActivity" />
     </application>
 
 </manifest>

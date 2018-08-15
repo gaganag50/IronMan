@@ -71,6 +71,7 @@
         android:paddingBottom="@dimen/main_activity_margin"
         android:textColor="@android:color/black"
         tools:text="Date" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

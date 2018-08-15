@@ -2,10 +2,12 @@ package com.android.example.ironman.ui
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import com.android.example.ironman.Calculator
 import com.android.example.ironman.R
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -24,7 +26,9 @@ class SettingsActivity : AppCompatActivity() {
 
         }
 
-
+        btnSave.setOnClickListener {
+            startActivity(Intent(this@SettingsActivity, Calculator::class.java))
+        }
 
 
 

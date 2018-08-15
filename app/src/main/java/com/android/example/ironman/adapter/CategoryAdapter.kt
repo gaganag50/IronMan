@@ -28,10 +28,10 @@ class CategoryAdapter(val context: CategoryAddition, val list: ArrayList<Categor
 
     }
 
-    inner class CategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class CategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(stringCategoryId: Category) {
 
-            itemView.tvCat.text =stringCategoryId.category
+            itemView.tvCat.text = stringCategoryId.category
 
         }
 

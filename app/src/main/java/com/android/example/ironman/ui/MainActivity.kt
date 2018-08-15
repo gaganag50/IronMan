@@ -2,13 +2,11 @@ package com.android.example.ironman.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Message
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,7 +14,6 @@ import com.android.example.ironman.App.App
 import com.android.example.ironman.R
 import com.android.example.ironman.adapter.ExpenseAdatper
 import com.android.example.ironman.db.Expense
-import com.android.example.ironman.ui.DeleteDialog.Companion.ShowMsgDialog
 import com.android.example.ironman.ui.EditActivity.Companion.extraForIntent
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -35,7 +32,6 @@ class MainActivity : AppCompatActivity() {
 
 
     /** for posting authentication attempts back to UI thread  */
-    val mHandler = DeleteDialog.Companion.IncomingHandler(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,18 +93,29 @@ class MainActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 //Remove swiped item from list and notify the RecyclerView
 
-                val position = viewHolder.adapterPosition
-                val id = adapter.getId(position)
-                val expense = adapter.getItem(position)
-                expenseBox!!.remove(id!!.toLong())
-                adapter.notifyItemRemoved(position)
+                val adapterPosition = viewHolder.adapterPosition
+                val exp = listOfExpenses[adapterPosition]
+                expenseBox!!.remove(exp)
+                listOfExpenses.removeAt(adapterPosition)
+                rvList.scrollToPosition(adapterPosition)
+                adapter.notifyItemRemoved(adapterPosition)
 
-                Snackbar.make(rvList, "Expense Deleted", Snackbar.LENGTH_SHORT)
-                        .setAction("UNDO", View.OnClickListener { view ->
-                            expenseBox!!.put(expense)
-                            listOfExpenses.add(position, expense)
-                            adapter.notifyItemInserted(position)
-                        }).show()
+                Snackbar.make(rvList, "1 item removed", Snackbar.LENGTH_SHORT)
+                        .setAction("UNDO") {
+                            expenseBox!!.put(exp)
+                            listOfExpenses.add(adapterPosition, exp)
+                            adapter.notifyItemInserted(adapterPosition)
+
+
+                        }.show()
+
+
+
+
+
+
+
+
 
                 refreshList()
 
@@ -156,36 +163,18 @@ class MainActivity : AppCompatActivity() {
 
         i.putExtra(extraForIntent, adapter.getId(position))
 
+
+
+
+
         startActivity(i)
 
 
     }
 
-
     private fun onLongItemClick(position: Int, recyclerView: RecyclerView) {
-        val item = adapter.getItem(position)
-        ShowMsgDialog(this@MainActivity, "title", "message", mHandler, item, expenseBox)
-
-    }
 
 
-    internal fun HandleMessage(msg: Message) {
-        val handlerMessage =
-                DeleteDialog.Companion.HandlerMessage.values()[msg.arg1]
-
-        when (handlerMessage) {
-            DeleteDialog.Companion.HandlerMessage.Yes -> {
-                refreshList()
-
-
-            }
-
-            DeleteDialog.Companion.HandlerMessage.No -> {
-                Log.d(tag, ": no")
-
-            }
-        }//Do something ...
-        //Do something ...
     }
 
 

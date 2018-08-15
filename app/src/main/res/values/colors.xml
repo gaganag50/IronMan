@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3f51b5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#ff4081</color>
+    <color name="colorPrimary">#03A9F4</color>
+    <color name="colorPrimaryDark">#0288D1</color>
+    <color name="colorAccent">#FF9800</color>
 
 
     <color name="colorAccentRed">#FF5252</color>
     <color name="colorAccentGreen">#76FF03</color>
 
-    <color name="primary">#3F51B5</color>
-    <color name="primary_dark">#303F9F</color>
+    <color name="primary">#03A9F4</color>
+    <color name="primary_dark">#0288D1</color>
     <color name="primary_light">#C5CAE9</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
@@ -27,6 +27,24 @@
     <color name="mdtp_accent_color">#009688</color>
     <color name="mdtp_accent_color_dark">#00796b</color>
     <color name="red">#ff0000</color>
+
+    <color name="button_color">#FFFFFF</color>
+    <color name="button_background">#455A64</color>
+    <color name="input_background">@color/primary</color>
+    <color name="input_text_color">#FFFFFF</color>
+
+    <color name="result_background">#ECEFF1</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#727272</color>
+
+
+    <color name="primary_text_default_dark">#ffffffff</color>
+    <color name="primary_text_default_light">#de000000</color>
+    <color name="secondary_text_default_light">#8a000000</color>
+    <color name="primary_text_disabled_light">#39000000</color>
+    <color name="primary_text_disabled_dark">#4Dffffff</color>
+
+    <!--<color name="abc_primary_text_material_light">    #ffffffff</color>-->
 
 
 </resources>

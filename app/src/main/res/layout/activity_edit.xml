@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context="com.android.example.ironman.ui.EditActivity">
-
-
-
 
 
     <LinearLayout
@@ -123,12 +121,64 @@
                 tools:text="Time" />
 
             <Button
-                android:id="@+id/btnAttendanceDate"
+                android:id="@+id/btnDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2.5"
+                android:layout_weight="1.5"
                 android:hint="DATE" />
+
+            <Button
+                android:id="@+id/btnAttendanceDay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="DAY" />
+
+            <Button
+                android:id="@+id/btnAttendanceMonth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Month" />
+
+            <Button
+                android:id="@+id/btnYear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Year" />
+
+            <Button
+                android:id="@+id/btnExclusiveDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Year" />
+
+
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvColorChangeDateTimePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="change the color of data time picker"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textAllCaps="true"
+            android:textColor="@android:color/black"
+            android:textSize="32sp"
+            tools:text="#123456" />
+
+        <Spinner
+            android:id="@+id/color_mode_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -144,6 +194,6 @@
         app:fabSize="normal" />
 
 
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>
 
 

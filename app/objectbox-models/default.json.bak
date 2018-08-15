@@ -1,0 +1,82 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:7418935122979771531",
+      "lastPropertyId": "9:5334643139619514178",
+      "name": "Expense",
+      "properties": [
+        {
+          "id": "1:3662912043551499282",
+          "name": "id"
+        },
+        {
+          "id": "2:912378499999696152",
+          "name": "money"
+        },
+        {
+          "id": "3:1386092048381365966",
+          "name": "catergory"
+        },
+        {
+          "id": "4:2173418634321192643",
+          "name": "description"
+        },
+        {
+          "id": "5:3381310940894194109",
+          "name": "date"
+        },
+        {
+          "id": "6:4612424205624761856",
+          "name": "time"
+        },
+        {
+          "id": "7:1814493820048862462",
+          "name": "day"
+        },
+        {
+          "id": "8:7370392039903544297",
+          "name": "month"
+        },
+        {
+          "id": "9:5334643139619514178",
+          "name": "year"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:1236149182201494427",
+      "lastPropertyId": "3:4975351042377376850",
+      "name": "Category",
+      "properties": [
+        {
+          "id": "1:5348159499582410420",
+          "name": "category"
+        },
+        {
+          "id": "2:1057207712911248009",
+          "name": "subCategory"
+        },
+        {
+          "id": "3:4975351042377376850",
+          "name": "id"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "2:1236149182201494427",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
