@@ -127,53 +127,26 @@
                 android:layout_weight="1.5"
                 android:hint="DATE" />
 
-            <Button
-                android:id="@+id/btnAttendanceDay"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="DAY" />
-
-            <Button
-                android:id="@+id/btnAttendanceMonth"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Month" />
-
-            <Button
-                android:id="@+id/btnYear"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Year" />
-
-            <Button
-                android:id="@+id/btnExclusiveDate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Year" />
-
 
         </LinearLayout>
 
+
         <TextView
             android:id="@+id/tvColorChangeDateTimePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:text="change the color of data time picker"
-            android:textSize="12sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
+            android:text="#123456"
             android:textAllCaps="true"
             android:textColor="@android:color/black"
-            android:textSize="32sp"
-            tools:text="#123456" />
+            android:textSize="32sp" />
 
         <Spinner
             android:id="@+id/color_mode_spinner"

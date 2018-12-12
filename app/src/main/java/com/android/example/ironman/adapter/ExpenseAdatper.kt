@@ -61,24 +61,23 @@ class ExpenseAdatper(
 
         fun bind(expense: Expense, clickListener: (Int) -> Unit, longClickListener: (Int) -> Unit, position: Int) {
 
-//
-//            itemView.findViewById<TextView>(R.id.tvtotal).text = expense.money.toString()
-//            itemView.findViewById<TextView>(R.id.tvCategory).text = expense.catergory
-//            itemView.findViewById<TextView>(R.id.tvNote).text = expense.description
-//            itemView.findViewById<TextView>(R.id.tvDate).text = expense.date
-//            itemView.findViewById<TextView>(R.id.tvTime).text = expense.time
 
 
             itemView.findViewById<TextView>(R.id.tvMoneySignUpper).text = "Rs"
-            itemView.findViewById<TextView>(R.id.tvDay).text = expense.day
-            itemView.findViewById<TextView>(R.id.tvDate).text = expense.exclusiveDate
-            itemView.findViewById<TextView>(R.id.tvMonth).text = expense.month
             itemView.findViewById<TextView>(R.id.tvMoneySignLower).text = "Rs"
             itemView.findViewById<ImageView>(R.id.imageView).setImageResource(R.drawable.ic_launcher_background)
             itemView.findViewById<TextView>(R.id.tvCategory).text = expense.catergory
             itemView.findViewById<TextView>(R.id.tvDescription).text = expense.description
             itemView.findViewById<TextView>(R.id.tvTotalForDay).text = expense.money.toString()
             itemView.findViewById<TextView>(R.id.tvMoney).text = expense.money.toString()
+
+            itemView.findViewById<TextView>(R.id.tvDate).text = expense.exclusiveDate
+            itemView.findViewById<TextView>(R.id.tvMonth).text = expense.month
+            itemView.findViewById<TextView>(R.id.tvTime).text = expense.time
+            Log.d("Adapter", ": expense.time ${expense.time}")
+
+            itemView.findViewById<TextView>(R.id.tvDay).text = expense.day
+
 
             itemView.setOnClickListener {
                 clickListener(position)

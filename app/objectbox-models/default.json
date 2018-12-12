@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:7418935122979771531",
-      "lastPropertyId": "10:183662967757969788",
+      "lastPropertyId": "14:4020548523869067490",
       "name": "Expense",
       "properties": [
         {
@@ -33,20 +33,20 @@
           "name": "time"
         },
         {
-          "id": "7:1814493820048862462",
+          "id": "11:7661751233827780573",
           "name": "day"
         },
         {
-          "id": "8:7370392039903544297",
-          "name": "month"
+          "id": "12:4623533011540110114",
+          "name": "exclusiveDate"
         },
         {
-          "id": "9:5334643139619514178",
+          "id": "13:5618279157791767783",
           "name": "year"
         },
         {
-          "id": "10:183662967757969788",
-          "name": "exclusiveDate"
+          "id": "14:4020548523869067490",
+          "name": "month"
         }
       ],
       "relations": []
@@ -80,7 +80,12 @@
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    1814493820048862462,
+    7370392039903544297,
+    5334643139619514178,
+    183662967757969788
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

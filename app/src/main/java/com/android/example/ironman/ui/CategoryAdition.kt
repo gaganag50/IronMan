@@ -3,8 +3,8 @@ package com.android.example.ironman.ui
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
-import ayalma.ir.expandablerecyclerview.ExpandableRecyclerView
 import com.android.example.ironman.R
 import com.android.example.ironman.adapter.CategoryAdapter
 import com.android.example.ironman.adapter.PurchaseItemRecyclerViewAdapter
@@ -30,7 +30,7 @@ class CategoryAddition : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_category)
+        setContentView(R.layout.activity_adding_category)
 
         val drawable = resources.getDrawable(image)
 
@@ -47,10 +47,10 @@ class CategoryAddition : AppCompatActivity() {
 
         list = ArrayList(categoryBox!!.all)
 
-        val recyclerView = findViewById(R.id.purchase_list) as ExpandableRecyclerView
+        val recyclerView = findViewById<RecyclerView>(R.id.expandableView)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         val testAdapter = PurchaseItemRecyclerViewAdapter(this, list)
-        recyclerView.adapter = testAdapter
+//        recyclerView.adapter = testAdapter
 
 
 //        btnSaveCategory.setOnClickListener {

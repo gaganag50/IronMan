@@ -6,7 +6,10 @@ import android.content.Context
 import android.util.Log
 import android.widget.Button
 import com.android.example.ironman.R
-import com.android.example.ironman.dateMonth.Time.Companion.timeConversion
+import com.android.example.ironman.ui.EditActivity.Companion.Date
+import com.android.example.ironman.ui.EditActivity.Companion.Day
+import com.android.example.ironman.ui.EditActivity.Companion.Month
+import com.android.example.ironman.ui.EditActivity.Companion.Year
 import com.android.example.ironman.ui.EditActivity.Companion.militaryTime
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
@@ -33,22 +36,36 @@ class DateTimePicker(
         val context: Context,
         val btnAttendanceDate: Button,
         val btnTime: Button,
-        val btnDay: Button,
         val fm: FragmentManager,
-        val text: CharSequence,
-        val btnAttendanceMonth: Button,
-        val btnAttendanceYear: Button,
-        val btnExclusiveDate: Button
+        val text: CharSequence
 
 ) : DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+    companion object {
 
-    val days = arrayOf("", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
 
+        val days = arrayOf("", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
+    }
 
-    fun displayDay(date: String): String {
+    fun displayDay(date: String, year: Int, monthOfYear: Int, dayOfMonth: Int, month1: String): String {
         val c = Calendar.getInstance()
+
+        Log.d(TAG, ": date $date")
+        Log.d(TAG, ": year $year")
+        Log.d(TAG, ": monthOfYear $monthOfYear")
+        Log.d(TAG, ": dayOfMonth $dayOfMonth")
+        Log.d(TAG, ": month1 $month1")
+
+        val Month = monthOfYear + 1
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+
         val df = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
-        c.time = df.parse(date)
+        Log.d(TAG, ": date $date")
+        Log.d(TAG, ": sdf $sdf")
+
+
+        val dateString = "16/08/2018"
+        c.time = sdf.parse(dayOfMonth.toString() + "/" + Month + "/" + year)
         val day = days[c.get(Calendar.DAY_OF_WEEK)]
         return day
     }
@@ -57,10 +74,12 @@ class DateTimePicker(
         val month = DateMonth.getMonthName(monthOfYear)
         val date = "$month $dayOfMonth, $year"
         btnAttendanceDate.text = date
-        btnDay.text = displayDay(btnAttendanceDate.toString())
-        btnAttendanceMonth.text = month
-        btnAttendanceYear.text = year.toString()
-        btnExclusiveDate.text = dayOfMonth.toString()
+
+        Day = displayDay(btnAttendanceDate.text.toString(), year, monthOfYear, dayOfMonth, month)
+        Log.d(TAG, ": btnAttendanceDate ${btnAttendanceDate.text}")
+        Month = month
+        Year = year.toString()
+        Date = dayOfMonth.toString()
 
 
     }
@@ -85,10 +104,6 @@ class DateTimePicker(
         }
 
 
-
-
-
-
     }
 
 
@@ -101,9 +116,9 @@ class DateTimePicker(
 
 
 
-        Log.d(TAG, ": $hour")
-        Log.d(TAG, ": $min")
-        Log.d(TAG, ": $sec")
+        Log.d(TAG, "hour : $hour")
+        Log.d(TAG, "min : $min")
+        Log.d(TAG, "sec : $sec")
 
 
         if (!militaryTime && selectedTime.substring(9) == context.getString(R.string.timeInPM) && hour < 12)
@@ -132,7 +147,7 @@ class DateTimePicker(
 
         val now = Calendar.getInstance()
         val selectedDate = btnAttendanceDate.text.toString()
-        Log.d(TAG, ": $selectedDate")
+        Log.d(TAG, "selectedDate : $selectedDate")
 
         val monthString = selectedDate.substring(0, 3)
         val date: Int?
@@ -149,7 +164,7 @@ class DateTimePicker(
 
 
         val monthNumber = DateMonth.getMonthNumber(monthString)
-        Log.d(TAG, ": ${selectedDate.length}")
+        Log.d(TAG, "{selectedDate.length}: ${selectedDate.length}")
 
         Log.d(TAG, ": year $year")
         Log.d(TAG, ": monthNumber $monthNumber")

@@ -1,0 +1,145 @@
+[
+  {
+    "category": "Food",
+    "data": [
+      {
+        "title": "Cafe"
+      },
+      {
+        "title": "Groceries"
+      },
+      {
+        "title": "Other"
+      },
+      {
+        "title": "Restaurant"
+      },
+      {
+        "title": "Snack"
+      }
+    ]
+  },
+  {
+    "category": "Entertainment",
+    "data": [
+      {
+        "title": "Concert"
+      },
+      {
+        "title": "Movies"
+      },
+      {
+        "title": "Other"
+      },
+      {
+        "title": "Party"
+      },
+      {
+        "title": "Sport"
+      }
+    ]
+  },
+  {
+    "category": "Shopping",
+    "data": [
+      {
+        "title": "Accessories"
+      },
+      {
+        "title": "Clothing"
+      },
+      {
+        "title": "Electronics"
+      },
+      {
+        "title": "Footwear"
+      },
+      {
+        "title": "Other"
+      }
+    ]
+  },
+  {
+    "category": "Health",
+    "data": [
+      {
+        "title": "Dental"
+      },
+      {
+        "title": "Eye Cae"
+      },
+      {
+        "title": "Insurance"
+      },
+      {
+        "title": "Medical"
+      },
+      {
+        "title": "Nutrition"
+      },
+      {
+        "title": "Other"
+      },
+      {
+        "title": "Prescription"
+      }
+    ]
+  },
+  {
+    "category": "Education",
+    "data": [
+      {
+        "title": "Books"
+      },
+      {
+        "title": "Print ut & Photocopy"
+      },
+      {
+        "title": "Other"
+      }
+    ]
+  },
+  {
+    "category": "Transportation",
+    "data": [
+      {
+        "title": "Airplane"
+      },
+      {
+        "title": "Car Rental"
+      },
+      {
+        "title": "Food"
+      },
+      {
+        "title": "Hotel"
+      },
+      {
+        "title": "Misc"
+      },
+      {
+        "title": "Other"
+      },
+      {
+        "title": "Taxi"
+      }
+    ]
+  },
+  {
+    "category": "family",
+    "data": [
+      {
+        "title": "Child care"
+      },
+      {
+        "title": "Child Education"
+      },
+      {
+        "title": "Other"
+      },
+      {
+        "title": "Toy"
+      }
+    ]
+  }
+]

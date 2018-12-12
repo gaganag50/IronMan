@@ -13,11 +13,11 @@ class Expense(
         var catergory: String = "",
         var description: String = "",
         var date: String? = null,
+        var time: String? = null,
         var day: String? = null,
-        var month: String? = null,
         var exclusiveDate: String? = null,
         var year: String? = null,
-        var time: String? = null
+        var month: String? = null
 ) {
 
 

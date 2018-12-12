@@ -13,15 +13,23 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.Toast
 import com.android.example.ironman.R
+import com.android.example.ironman.dateMonth.DateMonth
 import com.android.example.ironman.dateMonth.DateTimePicker
-import com.android.example.ironman.dateMonth.showColorPickerDialog
 import com.android.example.ironman.db.Expense
 import com.android.example.ironman.ui.MainActivity.Companion.expenseBox
 import kotlinx.android.synthetic.main.activity_edit.*
+import me.priyesh.chroma.ChromaDialog
 import me.priyesh.chroma.ColorMode
+import me.priyesh.chroma.ColorSelectListener
 import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.Month
+import java.time.Year
 import java.util.*
 
 class EditActivity : AppCompatActivity() {
@@ -42,6 +50,10 @@ class EditActivity : AppCompatActivity() {
     companion object {
         val extraForIntent = "ID"
         val militaryTime = true
+        var Month : String? = null
+        var Day: String? = null
+        var Date: String? = null
+        var Year: String? = null
 
     }
 
@@ -67,12 +79,8 @@ class EditActivity : AppCompatActivity() {
                 context = this@EditActivity,
                 btnAttendanceDate = findViewById(R.id.btnDate),
                 btnTime = findViewById(R.id.btnTime),
-                btnDay = findViewById<Button>(R.id.btnAttendanceDay),
                 fm = fragmentManager,
-                text = tvColorChangeDateTimePicker.text,
-                btnAttendanceMonth = findViewById<Button>(R.id.btnAttendanceMonth),
-                btnAttendanceYear = findViewById<Button>(R.id.btnYear),
-                btnExclusiveDate = findViewById<Button>(R.id.btnExclusiveDate)
+                text = tvColorChangeDateTimePicker.text
         )
 
         val stringArray = resources.getStringArray(R.array.array_category_options)
@@ -89,22 +97,36 @@ class EditActivity : AppCompatActivity() {
         btnDate.setOnClickListener { dateTimePicker.displayDate() }
         btnTime.setOnClickListener { dateTimePicker.displayTime(militaryTime) }
 
+        val adapter = ArrayAdapter(
+                this, android.R.layout.simple_spinner_dropdown_item, ColorMode.values())
+        color_mode_spinner.adapter = adapter
+        color_mode_spinner.setSelection(adapter.getPosition(colorMode))
+
         tvColorChangeDateTimePicker.setOnClickListener {
 
 
-            showColorPickerDialog.showColorPickerDialog(
-                    this, color_mode_spinner,
-                    findViewById<TextView>(R.id.tvColorChangeDateTimePicker),
-                    supportFragmentManager,
-                    mColor!!, colorMode
+            Log.d(TAG, ": ColorMode.values() ${ColorMode.values().toList()}")
+            Log.d(TAG, ": colorMode ${colorMode}")
 
+            ChromaDialog.Builder()
+                    .initialColor(mColor!!)
+                    .colorMode(color_mode_spinner.selectedItem as ColorMode)
+                    .onColorSelected(object : ColorSelectListener {
+                        override fun onColorSelected(color: Int) {
+                            updateTextView(color)
+                            mColor = color
+                        }
 
-            )
+                        private fun updateTextView(color: Int) {
+                            text_view.text = (String.format("#%06X", 0xFFFFFF and color))
+
+                        }
+                    })
+                    .create()
+                    .show(supportFragmentManager, "dialog")
+
 
         }
-
-
-
 
 
         etTotal.setOnTouchListener(mTouchListener)
@@ -125,6 +147,17 @@ class EditActivity : AppCompatActivity() {
 
     }
 
+    fun settingDay(year: Int, monthOfYear: Int, dayOfMonth: Int): String {
+
+        val Month = monthOfYear + 1
+        val c = Calendar.getInstance()
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+        c.time = sdf.parse(dayOfMonth.toString() + "/" + Month + "/" + year)
+        val day = DateTimePicker.days[c.get(Calendar.DAY_OF_WEEK)]
+        return day
+    }
+
     fun updatingExpense(stringArray: Array<out String>?, btnTime: Button) {
         title = getString(R.string.editor_activity_title_edit_expense)
         val exp = expenseBox?.get(idOfIncomingExpense)
@@ -135,29 +168,18 @@ class EditActivity : AppCompatActivity() {
             val initialdescription = it.description
             val initialdate = it.date
             val initialtime = it.time
-            val initialday = it.day
-            val month = it.month
-            val initialexclusiveDate = it.exclusiveDate
-
-            Log.d(TAG, """
-                        initialMoney $initialMoney
-                        initialCategory $initialCategory
-                        initialdescription $initialdescription
-                        initialdate $initialdate
-                        initialtime $initialtime
-                    """.trimIndent())
 
 
-            setupSpinner(stringArray.indexOf(initialCategory))
+
+
+            setupSpinner(stringArray!!.indexOf(initialCategory))
 
 
             etTotal.setText(initialMoney.toString())
             etNote.setText(initialdescription)
             btnTime.text = initialtime
             btnDate.text = initialdate
-            btnAttendanceDay.text = initialday
-            btnAttendanceMonth.text = month
-            btnExclusiveDate.text = initialexclusiveDate
+
         }
     }
 
@@ -174,9 +196,19 @@ class EditActivity : AppCompatActivity() {
         val date = btnDate.text.toString()
         val month = date.substring(0, 3)
         val year = date.substring(date.length - 4)
-        btnAttendanceMonth.text = month
-        btnYear.text = year
 
+
+
+        Log.d(TAG, ": date ${date.length}")
+        val dateMont: String
+        if (date.length == 12)
+            dateMont = date.substring(4, 6)
+        else
+            dateMont = date.substring(4, 5)
+        Day = settingDay(year.toInt(), DateMonth.getMonthNumber(month), dateMont.toInt())
+        Year = year
+        Date = dateMont
+        Month = month
         Log.d(TAG, ": btnDate.text  ${btnDate.text}")
         Log.d(TAG, ": btnTime.text ${btnTime.text}")
 
@@ -373,10 +405,12 @@ class EditActivity : AppCompatActivity() {
                         catergory = categoryOfExpense,
                         description = note,
                         date = toString,
-                        day = btnAttendanceDay.text as String?,
-                        month = btnAttendanceMonth.text.toString(),
-                        exclusiveDate = btnExclusiveDate.text.toString(),
-                        time = time
+                        time = time,
+                        day = Day,
+                        exclusiveDate = Date,
+                        year = Year,
+                        month = Month
+
                 )
                 val addExpense = expenseBox?.put(expense)
 
@@ -403,14 +437,11 @@ class EditActivity : AppCompatActivity() {
                     it.money = etTotal.text.toString().toInt()
                     it.description = etNote.text.toString()
                     it.date = btnDate.text.toString()
-                    it.day = btnAttendanceDay.text.toString()
-                    it.month = btnAttendanceMonth.text.toString()
                     it.time = btnTime.text.toString()
-                    it.month = btnAttendanceMonth.text.toString()
-                    it.day = btnAttendanceDay.text.toString()
-                    it.exclusiveDate = btnExclusiveDate.text.toString()
-
-
+                    it.exclusiveDate = Date
+                    it.day = Day
+                    it.month = Month
+                    it.year = Year
                     val rowsAffected = expenseBox?.put(it)
 
 

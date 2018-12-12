@@ -255,7 +255,6 @@
     <string name="cat_pets">Pets</string>
     <string name="cat_presents">Presents</string>
 
-    cat_presents
 
     <string name="cat_entertainment">Entertainment</string>
     <string name="cat_food">Food</string>
@@ -300,7 +299,7 @@
     <string name="healthCareCatEyeCare">Eye Care</string>
     <string name="healthCareCatHealthInsurance">Health Insurance</string>
     <string name="healthCareCatMedical">Medical</string>
-    <string name="healthCareCatNutrition">Nutition</string>
+    <string name="healthCareCatNutrition">Nutrition</string>
     <string name="healthCareCatOther">Other</string>
     <string name="healthCareCatPrescription">Prescription</string>
     <string name="travelCatAirplane">Airplane</string>

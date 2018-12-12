@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.android.example.ironman.App.App
 import com.android.example.ironman.R
 import com.android.example.ironman.adapter.ExpenseAdatper
+import com.android.example.ironman.adapter.RVEmptyObserver
 import com.android.example.ironman.db.Expense
 import com.android.example.ironman.ui.EditActivity.Companion.extraForIntent
 import kotlinx.android.synthetic.main.activity_main.*
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
 
         listOfExpenses = ArrayList(expenseBox!!.all.toList())
-        showingEmptyView()
+//        showingEmptyView()
 
         adapter = ExpenseAdatper(
                 listOfExpenses,
@@ -53,7 +55,8 @@ class MainActivity : AppCompatActivity() {
         rvList.layoutManager = LinearLayoutManager(this)
 
         rvList.adapter = adapter
-
+        val observer = RVEmptyObserver(rvList, empty_view)
+        adapter.registerAdapterDataObserver(observer)
 
 
         swipeToDelete(listOfExpenses)
@@ -62,8 +65,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshList() {
+        Log.d(tag, ": refreshList")
+
         adapter.updateExpenseListItems(expenseBox!!.all.toList())
-        showingEmptyView()
+//        showingEmptyView()
 
     }
 
